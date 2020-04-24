@@ -1,6 +1,8 @@
 package io.github.nikmang.playerinfo.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -26,6 +28,7 @@ public class Player {
     @Column(unique = true)
     private String uuid;
 
+    @JsonBackReference
     @ManyToMany
     @JoinTable(
             name = "Player_Team",

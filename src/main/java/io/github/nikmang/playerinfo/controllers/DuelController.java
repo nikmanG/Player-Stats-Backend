@@ -1,6 +1,7 @@
 package io.github.nikmang.playerinfo.controllers;
 
 import io.github.nikmang.playerinfo.models.Player;
+import io.github.nikmang.playerinfo.models.Team;
 import io.github.nikmang.playerinfo.models.duelling.DuelMatch;
 import io.github.nikmang.playerinfo.models.duelling.DuelPlayer;
 import io.github.nikmang.playerinfo.services.DuelService;
@@ -10,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -53,6 +53,13 @@ public class DuelController {
                 .body(getPlayers);
     }
 
+    @GetMapping("all_teams")
+    public ResponseEntity<List<Team>> getTeams() {
+        return ResponseEntity
+                .ok()
+                .body(duelService.getTeams());
+    }
+
     @GetMapping("profile")
     public ResponseEntity<DuelPlayer> getPlayerData(@RequestParam String uuid) {
         DuelPlayer pl = duelService.getPlayerProfile(uuid);
@@ -64,16 +71,16 @@ public class DuelController {
     }
 
     @GetMapping("history")
-    public ResponseEntity<List<DuelMatch>> getMatchHistory(@RequestParam String uuid, @RequestParam boolean winsOnly) {
+    public ResponseEntity<List<DuelMatch>> getMatchHistory(@RequestParam long id, @RequestParam boolean winsOnly) {
         if(winsOnly) {
             return ResponseEntity
                     .ok()
-                    .body(duelService.retrieveAllWonMatchesForPlayer(uuid));
+                    .body(duelService.retrieveAllWonMatchesForPlayer(id));
         }
 
         return ResponseEntity
                 .ok()
-                .body(duelService.retrieveAllMatchesForPlayer(uuid));
+                .body(duelService.retrieveAllMatchesForPlayer(id));
     }
 }
 

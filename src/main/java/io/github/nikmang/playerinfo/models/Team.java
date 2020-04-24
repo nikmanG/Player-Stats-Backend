@@ -1,9 +1,12 @@
 package io.github.nikmang.playerinfo.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.github.nikmang.playerinfo.enums.TeamType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -30,10 +33,17 @@ public class Team {
     @Enumerated(EnumType.STRING)
     private TeamType teamType;
 
+    @JsonManagedReference
     @ManyToMany
     @JoinTable(
             name = "Player_Team",
             joinColumns = @JoinColumn(name = "team_id"),
             inverseJoinColumns = @JoinColumn(name = "player_id"))
     Set<Player> players;
+
+    @ColumnDefault("0")
+    private int wins;
+
+    @ColumnDefault("0")
+    private int losses;
 }

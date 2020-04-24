@@ -1,17 +1,18 @@
 package io.github.nikmang.playerinfo.services;
 
+import io.github.nikmang.playerinfo.enums.TeamType;
 import io.github.nikmang.playerinfo.models.Player;
+import io.github.nikmang.playerinfo.models.Team;
 import io.github.nikmang.playerinfo.models.duelling.DuelMatch;
 import io.github.nikmang.playerinfo.models.duelling.DuelPlayer;
 import io.github.nikmang.playerinfo.repositories.PlayerRepository;
+import io.github.nikmang.playerinfo.repositories.TeamRepository;
 import io.github.nikmang.playerinfo.repositories.duelling.DuelMatchRepository;
 import io.github.nikmang.playerinfo.repositories.duelling.DuelPlayerRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,14 +23,17 @@ public class DuelService {
     private static final int k = 24;
 
     private PlayerRepository playerRepository;
+    private TeamRepository teamRepository;
     private DuelPlayerRepository duelPlayerRepository;
     private DuelMatchRepository duelMatchRepository;
 
     public DuelService(
             PlayerRepository playerRepository,
+            TeamRepository teamRepository,
             DuelPlayerRepository duelPlayerRepository,
             DuelMatchRepository duelMatchRepository) {
         this.playerRepository = playerRepository;
+        this.teamRepository = teamRepository;
         this.duelPlayerRepository = duelPlayerRepository;
         this.duelMatchRepository = duelMatchRepository;
     }
@@ -68,6 +72,10 @@ public class DuelService {
         return duelMatch;
     }
 
+    public List<Team> getTeams() {
+        return teamRepository.findAllTeamsByType(TeamType.DUEL.toString());
+    }
+
     // Retrieves player profile or creates a new one
     // Does NOT save new profile if created
     public DuelPlayer getPlayerProfile(String uuid) {
@@ -83,16 +91,24 @@ public class DuelService {
         return duelPlayer;
     }
 
-    public List<DuelMatch> retrieveAllMatchesForPlayer(String uuid) {
-        Player player = playerRepository.findByUuid(uuid);
+    public List<DuelMatch> retrieveAllMatchesForPlayer(long id) {
+        Player player = playerRepository.findById(id).orElse(null);
+
+        if(player == null) {
+            return Collections.emptyList();
+        }
 
         return duelMatchRepository.findAllByPlayer(player.getId());
     }
 
-    public List<DuelMatch> retrieveAllWonMatchesForPlayer(String uuid) {
-        Player player = playerRepository.findByUuid(uuid);
+    public List<DuelMatch> retrieveAllWonMatchesForPlayer(long id) {
+        Player player = playerRepository.findById(id).orElse(null);
 
-        List<DuelMatch> allMatches = retrieveAllMatchesForPlayer(uuid);
+        if(player == null) {
+            return Collections.emptyList();
+        }
+
+        List<DuelMatch> allMatches = retrieveAllMatchesForPlayer(id);
 
         return allMatches.stream().filter(m -> m.getWinner().equals(player)).collect(Collectors.toList());
     }

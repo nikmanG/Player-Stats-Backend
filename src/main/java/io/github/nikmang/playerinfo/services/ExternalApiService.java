@@ -2,9 +2,11 @@ package io.github.nikmang.playerinfo.services;
 
 import io.github.nikmang.playerinfo.models.Player;
 import io.github.nikmang.playerinfo.repositories.PlayerRepository;
+import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
@@ -12,6 +14,8 @@ import java.util.*;
 @Service
 public class ExternalApiService {
     private static final String minecraftNameServer = "https://sessionserver.mojang.com/session/minecraft/profile/";
+    private static final String backupMinecraftNameServer = "https://playerdb.co/api/player/minecraft/";
+
     private static final long cooldown = 3600000L;
 
     private RestTemplate restTemplate;
@@ -23,7 +27,7 @@ public class ExternalApiService {
     }
 
     //Map uuid, name
-    public Map<String, String> getPlayerNames(List<Player> players) {
+    public Map<String, String> getPlayerNames(Collection<Player> players) {
         long currentTime = System.currentTimeMillis();
         Map<String, String> mappings = new HashMap<>();
 
@@ -32,12 +36,12 @@ public class ExternalApiService {
                 mappings.put(pl.getUuid(), getPlayerName(pl.getUuid()));
                 pl.setTimestampOfRetrieval(currentTime);
                 pl.setName(mappings.get(pl.getUuid()));
-                
-                playerRepository.save(pl);
             } else {
                 mappings.put(pl.getUuid(), pl.getName());
             }
         }
+
+        playerRepository.saveAll(players);
 
         return mappings;
     }
@@ -45,7 +49,11 @@ public class ExternalApiService {
     public String getPlayerName(String uuid) {
         String formatted = uuid.replaceAll("-", "");
 
-        return Objects.requireNonNull(this.restTemplate.getForObject(minecraftNameServer + formatted, MinecraftNamePacket.class)).name;
+        try {
+            return Objects.requireNonNull(this.restTemplate.getForObject(minecraftNameServer + formatted, MinecraftNamePacket.class)).name;
+        } catch(HttpClientErrorException e) {
+            return Objects.requireNonNull(this.restTemplate.getForObject(backupMinecraftNameServer + uuid, BackupNamePacket.class)).data.player.username;
+        }
     }
 }
 
@@ -55,4 +63,22 @@ class MinecraftNamePacket {
 
     @Setter
     String name;
+}
+
+class BackupNamePacket {
+    @Setter
+    boolean success;
+
+    @Setter
+    InnerPacket data;
+}
+
+class InnerPacket {
+    @Setter
+    InnerInnerPacket player;
+}
+
+class InnerInnerPacket {
+    @Setter
+    String username;
 }

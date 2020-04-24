@@ -4,6 +4,7 @@ import io.github.nikmang.playerinfo.models.Player;
 import io.github.nikmang.playerinfo.models.Team;
 import io.github.nikmang.playerinfo.repositories.PlayerRepository;
 import io.github.nikmang.playerinfo.repositories.TeamRepository;
+import io.github.nikmang.playerinfo.services.ExternalApiService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,12 +16,13 @@ import javax.validation.Valid;
 public class PlayerController {
 
     private final PlayerRepository playerRepository;
-
     private final TeamRepository teamRepository;
+    private final ExternalApiService externalApiService;
 
-    public PlayerController(PlayerRepository playerRepository, TeamRepository teamRepository) {
+    public PlayerController(PlayerRepository playerRepository, TeamRepository teamRepository, ExternalApiService externalApiService) {
         this.playerRepository = playerRepository;
         this.teamRepository = teamRepository;
+        this.externalApiService = externalApiService;
     }
 
     @PostMapping("add")
@@ -48,9 +50,14 @@ public class PlayerController {
 
     @GetMapping("find/{playerId}")
     public ResponseEntity<Player> getPlayerById(@PathVariable long playerId) {
-        return playerRepository
-                .findById(playerId)
-                .map(p -> ResponseEntity.accepted().body(p))
-                .orElse(ResponseEntity.notFound().build());
+        Player player = playerRepository.findById(playerId).orElse(null);
+
+        if(player != null) {
+            externalApiService.getPlayerName(player.getUuid());
+        }
+
+        return ResponseEntity
+                .ok()
+                .body(player);
     }
 }
