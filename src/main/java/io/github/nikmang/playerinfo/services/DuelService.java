@@ -80,6 +80,27 @@ public class DuelService {
     // Does NOT save new profile if created
     public DuelPlayer getPlayerProfile(String uuid) {
         Player player = playerRepository.findByUuid(uuid);
+
+        if(player == null) {
+            player = new Player();
+            player.setUuid(uuid);
+            player = playerRepository.save(player);
+        }
+
+        return getPlayerProfile(player);
+    }
+
+    public DuelPlayer getPlayerProfile(long playerId) {
+        Player player = playerRepository.findById(playerId).orElse(null);
+
+        if(player == null) {
+            return null;
+        }
+
+        return getPlayerProfile(player);
+    }
+
+    private DuelPlayer getPlayerProfile(Player player) {
         DuelPlayer duelPlayer = duelPlayerRepository.findByPlayer(player.getId());
 
         if(duelPlayer == null) {

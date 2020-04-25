@@ -70,6 +70,20 @@ public class DuelController {
                 .body(pl);
     }
 
+    @GetMapping("find/{playerId}")
+    public ResponseEntity<DuelPlayer> getPlayerById(@PathVariable long playerId) {
+        DuelPlayer duelPlayer = duelService.getPlayerProfile(playerId);
+
+        if(duelPlayer == null) {
+            return ResponseEntity
+                    .notFound()
+                    .build();
+        }
+        return ResponseEntity
+                .ok()
+                .body(duelPlayer);
+    }
+
     @GetMapping("history")
     public ResponseEntity<List<DuelMatch>> getMatchHistory(@RequestParam long id, @RequestParam boolean winsOnly) {
         if(winsOnly) {
@@ -82,10 +96,11 @@ public class DuelController {
                 .ok()
                 .body(duelService.retrieveAllMatchesForPlayer(id));
     }
-}
 
-@Data
-class MatchRecord {
-     String winner;
-     String loser;
+    @Data
+    static class MatchRecord {
+        String winner;
+        String loser;
+    }
+
 }

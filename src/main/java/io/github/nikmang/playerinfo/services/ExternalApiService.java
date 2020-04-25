@@ -2,7 +2,6 @@ package io.github.nikmang.playerinfo.services;
 
 import io.github.nikmang.playerinfo.models.Player;
 import io.github.nikmang.playerinfo.repositories.PlayerRepository;
-import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Service;
@@ -55,30 +54,30 @@ public class ExternalApiService {
             return Objects.requireNonNull(this.restTemplate.getForObject(backupMinecraftNameServer + uuid, BackupNamePacket.class)).data.player.username;
         }
     }
-}
 
-class MinecraftNamePacket {
-    @Setter
-    String id;
+    public static class MinecraftNamePacket {
+        @Setter
+        String id;
 
-    @Setter
-    String name;
-}
+        @Setter
+        String name;
+    }
 
-class BackupNamePacket {
-    @Setter
-    boolean success;
+    public static class BackupNamePacket {
+        @Setter
+        boolean success;
 
-    @Setter
-    InnerPacket data;
-}
+        @Setter
+        InnerPacket data;
+    }
 
-class InnerPacket {
-    @Setter
-    InnerInnerPacket player;
-}
+    public static class InnerPacket {
+        @Setter
+        InnerInnerPacket player;
+    }
 
-class InnerInnerPacket {
-    @Setter
-    String username;
+    public static class InnerInnerPacket {
+        @Setter
+        String username;
+    }
 }
