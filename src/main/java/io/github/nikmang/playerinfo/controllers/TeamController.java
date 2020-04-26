@@ -1,9 +1,14 @@
 package io.github.nikmang.playerinfo.controllers;
 
+import io.github.nikmang.playerinfo.enums.TeamType;
 import io.github.nikmang.playerinfo.models.Team;
 import io.github.nikmang.playerinfo.services.ExternalApiService;
 import io.github.nikmang.playerinfo.services.TeamService;
+import lombok.Setter;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 @CrossOrigin
 @RestController
@@ -25,5 +30,10 @@ public class TeamController {
         externalApiService.getPlayerNames(team.getPlayers());
 
         return team;
+    }
+
+    @GetMapping("player/{playerId}")
+    public Map<TeamType, Team> getTeamsForPlayer(@PathVariable long playerId) {
+        return teamService.getTeamsByPlayerId(playerId);
     }
 }

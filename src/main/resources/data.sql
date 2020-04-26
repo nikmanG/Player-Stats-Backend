@@ -11,13 +11,13 @@ VALUES (1, '1461170a-ce2b-4894-9713-ee476a2c703a'),
        (10, 'a76456c-02d2-64fd-98a6-3a4ccd70e2d17'),
        (11, 'dc78d78-830b-b427-5b5e-565d97590741f');
 
-INSERT INTO `Team` (id, name, team_type, wins, losses)
-VALUES (1, 'Gryffindor', 'QUIDDITCH', 4, 0),
-       (2, 'Slytherin', 'QUIDDITCH', 3, 1),
-       (3, 'Hufflepuff', 'QUIDDITCH', 0, 9000),
-       (4, 'Ravenclaw', 'QUIDDITCH', 5, 1),
-       (5, 'Aurors', 'DUEL', 100, 6),
-       (6, 'Death Eaters', 'DUEL', 6, 100);
+INSERT INTO `Team` (id, name, team_type, wins, losses, logo_url)
+VALUES (1, 'Gryffindor', 'QUIDDITCH', 4, 0, 'https://p1.hiclipart.com/preview/542/343/666/harry-potter-gryffindor-logo-thumbnail.jpg'),
+       (2, 'Slytherin', 'QUIDDITCH', 3, 1, 'https://toppng.com/uploads/preview/harry-potter-slytherin-logo-11549535063t3nuppcxfd.png'),
+       (3, 'Hufflepuff', 'QUIDDITCH', 0, 9000, 'https://www.pngfind.com/pngs/m/115-1150321_what-hogwarts-house-am-i-in-harry-potter.png'),
+       (4, 'Ravenclaw', 'QUIDDITCH', 5, 1, 'https://p7.hiclipart.com/preview/563/589/122/ravenclaw-house-fictional-universe-of-harry-potter-common-room-hogwarts-gryffindor-harry-potter-ravenclaw-thumbnail.jpg'),
+       (5, 'Aurors', 'DUEL', 100, 6, 'https://www.pngfind.com/pngs/m/193-1939784_harrypotter-hp-ministryofmagic-auror-harry-potter-ministry-of.png'),
+       (6, 'Death Eaters', 'DUEL', 6, 100, 'https://i.pinimg.com/originals/fb/2b/a3/fb2ba3cfe3208bc4f6a6ff4d7072174a.png');
 
 /* INSERT TEAM PAIRINGS */
 INSERT INTO `Player_Team` (player_id, team_id)
@@ -79,3 +79,5 @@ VALUES (1, '2020-04-21 20:41:28.824', 150, 70, 1, 2, 1),
 
 INSERT INTO `Quidditch_Match` (id, match_date, winner_score, loser_score, winner_id, loser_id)
 VALUES (6, '2020-03-21 20:41:28.824', 80, 70, 1, 2);
+
+alter sequence HIBERNATE_SEQUENCE restart with 500;

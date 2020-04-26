@@ -25,6 +25,17 @@ public class QuidditchService {
         this.quidditchMatchRepository = quidditchMatchRepository;
     }
 
+    /**
+     * Records a match for two teams.
+     *
+     * @param winnerTeamName Name of winning team
+     * @param loserTeamName Name of losing team
+     * @param winnerScore Score winning team received
+     * @param loserScore Score losing team received
+     * @param catcherUuid Can be null. UUID of player that caught snitch
+     *
+     * @return Match result
+     */
     public QuidditchMatch recordMatch(String winnerTeamName,
                                  String loserTeamName,
                                  int winnerScore,
@@ -32,6 +43,14 @@ public class QuidditchService {
                                  String catcherUuid) {
         Team winner = teamRepository.findTeamByNameAndType(winnerTeamName, TeamType.QUIDDITCH.toString());
         Team loser = teamRepository.findTeamByNameAndType(loserTeamName, TeamType.QUIDDITCH.toString());
+
+        if(winner == null) {
+            winner = createTeam(winnerTeamName);
+        }
+
+        if(loser == null) {
+            loser = createTeam(winnerTeamName);
+        }
 
         QuidditchMatch quidditchMatch = new QuidditchMatch();
 
@@ -55,5 +74,16 @@ public class QuidditchService {
         teamRepository.save(loser);
 
         return quidditchMatch;
+    }
+
+    private Team createTeam(String name) {
+        Team team = new Team();
+
+        team.setName(name);
+        team.setTeamType(TeamType.QUIDDITCH);
+
+        teamRepository.save(team);
+
+        return team;
     }
 }

@@ -25,7 +25,15 @@ public class ExternalApiService {
         this.playerRepository = playerRepository;
     }
 
-    //Map uuid, name
+    /**
+     * Retrieves a list of current player names based on their UUIDs.
+     * Only does retrieval once per hour per player.
+     * Primary retrieval location is sessionserver on mojang, backup is playerdb.
+     *
+     * @param players List of players to retrieve names for
+     *
+     * @return Map of player names in the form of key: uuid, value: name
+     */
     public Map<String, String> getPlayerNames(Collection<Player> players) {
         long currentTime = System.currentTimeMillis();
         Map<String, String> mappings = new HashMap<>();
@@ -45,6 +53,15 @@ public class ExternalApiService {
         return mappings;
     }
 
+    /**
+     * Retrieves a name for a given uuid.
+     * Only does retrieval once per hour per player.
+     * Primary retrieval location is sessionserver on mojang, backup is playerdb.
+     *
+     * @param uuid UUID of player
+     *
+     * @return name of player
+     */
     public String getPlayerName(String uuid) {
         String formatted = uuid.replaceAll("-", "");
 

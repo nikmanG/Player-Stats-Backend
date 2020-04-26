@@ -38,9 +38,26 @@ public class DuelService {
         this.duelMatchRepository = duelMatchRepository;
     }
 
+    /**
+     * Saves and returns match between two players.
+     * If player is not found then an entry is created for them.
+     *
+     * @param winnerUuid UUID of winner
+     * @param loserUuid UUID of loser
+     *
+     * @return Match record with updated elo information for both players
+     */
     public DuelMatch recordMatch(String winnerUuid, String loserUuid) {
         Player winner = playerRepository.findByUuid(winnerUuid);
         Player loser = playerRepository.findByUuid(loserUuid);
+
+        if(winner == null) {
+            winner = createPlayer(winnerUuid);
+        }
+
+        if(loser == null) {
+            loser = createPlayer(loserUuid);
+        }
 
         DuelPlayer winnerDuelPlayer = getPlayerProfile(winnerUuid);
         DuelPlayer loserDuelPlayer = getPlayerProfile(loserUuid);
@@ -72,24 +89,41 @@ public class DuelService {
         return duelMatch;
     }
 
+    /**
+     * Retrieves all duel teams in the system.
+     *
+     * @return All teams that apply to dueling
+     */
     public List<Team> getTeams() {
         return teamRepository.findAllTeamsByType(TeamType.DUEL.toString());
     }
 
-    // Retrieves player profile or creates a new one
-    // Does NOT save new profile if created
+    /**
+     * Retrieve {@linkplain DuelPlayer} information for a given player.
+     * If player does not have a profile, a new one is created (but not saved to system).
+     *
+     * @param uuid UUID of player
+     *
+     * @return information on player's duels
+     */
     public DuelPlayer getPlayerProfile(String uuid) {
         Player player = playerRepository.findByUuid(uuid);
 
         if(player == null) {
-            player = new Player();
-            player.setUuid(uuid);
-            player = playerRepository.save(player);
+            player = createPlayer(uuid);
         }
 
         return getPlayerProfile(player);
     }
 
+    /**
+     * Retrieve {@linkplain DuelPlayer} information for a given player.
+     * If player does not have a profile, a new one is created (but not saved to system).
+     *
+     * @param playerId ID of player as saved in the database
+     *
+     * @return information on player's duels. Will return <b>null</b> if player profile cannot be found.
+     */
     public DuelPlayer getPlayerProfile(long playerId) {
         Player player = playerRepository.findById(playerId).orElse(null);
 
@@ -100,6 +134,53 @@ public class DuelService {
         return getPlayerProfile(player);
     }
 
+    /**
+     * Gets all matches that a player has dueled in.
+     *
+     * @param playerId ID of player as saved in the database
+     *
+     * @return List of matches that the player was in
+     */
+    public List<DuelMatch> retrieveAllMatchesForPlayer(long playerId) {
+        Player player = playerRepository.findById(playerId).orElse(null);
+
+        if(player == null) {
+            return Collections.emptyList();
+        }
+
+        return duelMatchRepository.findAllByPlayer(player.getId());
+    }
+
+    /**
+     * Gets all matches that a player has dueled in <i>and won</i>.
+     *
+     * @param playerId ID of player as saved in the database
+     *
+     * @return List of matches that the player was in
+     */
+    public List<DuelMatch> retrieveAllWonMatchesForPlayer(long playerId) {
+        Player player = playerRepository.findById(playerId).orElse(null);
+
+        if(player == null) {
+            return Collections.emptyList();
+        }
+
+        List<DuelMatch> allMatches = retrieveAllMatchesForPlayer(playerId);
+
+        return allMatches.stream().filter(m -> m.getWinner().equals(player)).collect(Collectors.toList());
+    }
+
+    /**
+     * Retrieves all players that have dueling profiles.
+     * Sorted by elo amount descending.
+     *
+     * @return List of duel profiles
+     */
+    public List<DuelPlayer> getAllPlayers() {
+        return duelPlayerRepository.findAll(Sort.by("elo").descending());
+    }
+
+    // Gets player profile. Does not save a new one if one is created.
     private DuelPlayer getPlayerProfile(Player player) {
         DuelPlayer duelPlayer = duelPlayerRepository.findByPlayer(player.getId());
 
@@ -110,32 +191,6 @@ public class DuelService {
         }
 
         return duelPlayer;
-    }
-
-    public List<DuelMatch> retrieveAllMatchesForPlayer(long id) {
-        Player player = playerRepository.findById(id).orElse(null);
-
-        if(player == null) {
-            return Collections.emptyList();
-        }
-
-        return duelMatchRepository.findAllByPlayer(player.getId());
-    }
-
-    public List<DuelMatch> retrieveAllWonMatchesForPlayer(long id) {
-        Player player = playerRepository.findById(id).orElse(null);
-
-        if(player == null) {
-            return Collections.emptyList();
-        }
-
-        List<DuelMatch> allMatches = retrieveAllMatchesForPlayer(id);
-
-        return allMatches.stream().filter(m -> m.getWinner().equals(player)).collect(Collectors.toList());
-    }
-
-    public List<DuelPlayer> getAllPlayers() {
-        return duelPlayerRepository.findAll(Sort.by("elo").descending());
     }
 
     // Returns {winner Elo, loser Elo}
@@ -150,5 +205,13 @@ public class DuelService {
         result[1] = Math.round(loserElo + k * (0 - loserProb));
 
         return result;
+    }
+
+    private Player createPlayer(String uuid) {
+        Player player = new Player();
+        player.setUuid(uuid);
+        player = playerRepository.save(player);
+
+        return player;
     }
 }

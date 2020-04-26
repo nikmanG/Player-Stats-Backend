@@ -1,6 +1,5 @@
 package io.github.nikmang.playerinfo.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.github.nikmang.playerinfo.enums.TeamType;
 import lombok.Data;
@@ -15,7 +14,9 @@ import java.util.Set;
 
 @Data
 @Entity
-@Table(name = "Team")
+@Table(name = "Team", uniqueConstraints = {
+        @UniqueConstraint(columnNames =  {"name", "teamType"})
+})
 @EqualsAndHashCode(exclude = "players")
 @ToString(exclude = "players")
 public class Team {
@@ -26,7 +27,6 @@ public class Team {
 
     @NotNull
     @Size(min = 3, max = 20, message = "Name can only be between 3 and 20 letters alphanumeric")
-    @Column(unique = true)
     private String name;
 
     @NotNull
@@ -40,6 +40,8 @@ public class Team {
             joinColumns = @JoinColumn(name = "team_id"),
             inverseJoinColumns = @JoinColumn(name = "player_id"))
     Set<Player> players;
+
+    private String logoUrl;
 
     @ColumnDefault("0")
     private int wins;
