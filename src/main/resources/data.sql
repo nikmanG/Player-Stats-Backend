@@ -70,14 +70,20 @@ VALUES (1, '2020-04-21 20:41:28.824', 1200, 1500, 1211, 1300, 2, 1),
        (11, '2020-04-20 20:41:28.824', 900, 1400, 1111, 1300, 2, 1);
 
 /* QUIDDITCH INSERTS */
+INSERT INTO `Quidditch_Team` (id, team_id, points_for, points_against)
+VALUES (1, 1, 540, 270),
+       (2, 2, 330, 560),
+       (3, 3, 170, 220),
+       (4, 4, 110, 50);
+
 INSERT INTO `Quidditch_Match` (id, match_date, winner_score, loser_score, winner_id, loser_id, snitch_catcher_id)
 VALUES (1, '2020-04-21 20:41:28.824', 150, 70, 1, 2, 1),
-       (2, '2020-04-25 20:41:28.824', 110, 50, 4, 3, 1),
-       (3, '2020-04-23 20:41:28.824', 180, 130, 2, 4, 1),
+       (2, '2020-04-25 20:41:28.824', 110, 50, 4, 3, 7),
+       (3, '2020-04-23 20:41:28.824', 180, 130, 2, 4, 2),
        (4, '2020-05-21 20:41:28.824', 120, 110, 3, 1, 1),
        (5, '2020-04-21 20:41:28.824', 200, 10, 1, 2, 1);
 
 INSERT INTO `Quidditch_Match` (id, match_date, winner_score, loser_score, winner_id, loser_id)
 VALUES (6, '2020-03-21 20:41:28.824', 80, 70, 1, 2);
 
-alter sequence HIBERNATE_SEQUENCE restart with 500;
+ALTER SEQUENCE HIBERNATE_SEQUENCE RESTART WITH 4000;

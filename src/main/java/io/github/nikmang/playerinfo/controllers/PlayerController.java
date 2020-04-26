@@ -5,7 +5,7 @@ import io.github.nikmang.playerinfo.models.Team;
 import io.github.nikmang.playerinfo.services.ExternalApiService;
 import io.github.nikmang.playerinfo.services.PlayerService;
 import io.github.nikmang.playerinfo.services.TeamService;
-import lombok.Setter;
+import lombok.Data;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,13 +34,6 @@ public class PlayerController {
                 .body(playerService.addPlayer(wrapper.uuid));
     }
 
-    @PostMapping("add_team")
-    public ResponseEntity<Team> addTeam(@RequestBody Team team) {
-        return ResponseEntity
-                .ok()
-                .body(teamService.addTeam(team));
-    }
-
     @GetMapping("join")
     public ResponseEntity<Team> joinPlayerAndTeam(@RequestParam long playerId, @RequestParam long teamId) {
         Team t = teamService.getTeamById(teamId);
@@ -64,8 +57,8 @@ public class PlayerController {
                 .body(player);
     }
 
-    private static class UuidWrapper {
-        @Setter
+    @Data
+    static class UuidWrapper {
         String uuid;
     }
 }

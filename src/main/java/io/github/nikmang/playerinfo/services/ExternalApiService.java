@@ -40,7 +40,13 @@ public class ExternalApiService {
 
         for(Player pl : players) {
             if(pl.getName() == null || currentTime - pl.getTimestampOfRetrieval() > cooldown) {
-                mappings.put(pl.getUuid(), getPlayerName(pl.getUuid()));
+                String name = getPlayerName(pl.getUuid());
+
+                if(name == null) {
+                    name = "NAME NOT FOUND";
+                }
+
+                mappings.put(pl.getUuid(), name);
                 pl.setTimestampOfRetrieval(currentTime);
                 pl.setName(mappings.get(pl.getUuid()));
             } else {
@@ -67,8 +73,12 @@ public class ExternalApiService {
 
         try {
             return Objects.requireNonNull(this.restTemplate.getForObject(minecraftNameServer + formatted, MinecraftNamePacket.class)).name;
-        } catch(HttpClientErrorException e) {
-            return Objects.requireNonNull(this.restTemplate.getForObject(backupMinecraftNameServer + uuid, BackupNamePacket.class)).data.player.username;
+        } catch(Exception e) {
+            try {
+                return Objects.requireNonNull(this.restTemplate.getForObject(backupMinecraftNameServer + uuid, BackupNamePacket.class)).data.player.username;
+            } catch (Exception e2) {
+                return null;
+            }
         }
     }
 

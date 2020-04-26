@@ -4,10 +4,10 @@ import io.github.nikmang.playerinfo.enums.TeamType;
 import io.github.nikmang.playerinfo.models.Team;
 import io.github.nikmang.playerinfo.services.ExternalApiService;
 import io.github.nikmang.playerinfo.services.TeamService;
-import lombok.Setter;
+import lombok.Data;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @CrossOrigin
@@ -23,6 +23,13 @@ public class TeamController {
         this.externalApiService = externalApiService;
     }
 
+    @PostMapping("add")
+    public ResponseEntity<Team> addTeam(@RequestBody TeamWrapper teamWrapper) {
+        return ResponseEntity
+                .ok()
+                .body(teamService.addTeam(teamWrapper.name, TeamType.valueOf(teamWrapper.teamType.toUpperCase())));
+    }
+
     @GetMapping("find/{id}")
     public Team getIndividualTeam(@PathVariable long id) {
         Team team = teamService.getTeamById(id);
@@ -35,5 +42,11 @@ public class TeamController {
     @GetMapping("player/{playerId}")
     public Map<TeamType, Team> getTeamsForPlayer(@PathVariable long playerId) {
         return teamService.getTeamsByPlayerId(playerId);
+    }
+
+    @Data
+    static class TeamWrapper {
+        String name;
+        String teamType;
     }
 }

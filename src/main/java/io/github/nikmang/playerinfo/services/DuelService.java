@@ -142,32 +142,7 @@ public class DuelService {
      * @return List of matches that the player was in
      */
     public List<DuelMatch> retrieveAllMatchesForPlayer(long playerId) {
-        Player player = playerRepository.findById(playerId).orElse(null);
-
-        if(player == null) {
-            return Collections.emptyList();
-        }
-
-        return duelMatchRepository.findAllByPlayer(player.getId());
-    }
-
-    /**
-     * Gets all matches that a player has dueled in <i>and won</i>.
-     *
-     * @param playerId ID of player as saved in the database
-     *
-     * @return List of matches that the player was in
-     */
-    public List<DuelMatch> retrieveAllWonMatchesForPlayer(long playerId) {
-        Player player = playerRepository.findById(playerId).orElse(null);
-
-        if(player == null) {
-            return Collections.emptyList();
-        }
-
-        List<DuelMatch> allMatches = retrieveAllMatchesForPlayer(playerId);
-
-        return allMatches.stream().filter(m -> m.getWinner().equals(player)).collect(Collectors.toList());
+        return duelMatchRepository.findAllByPlayer(playerId);
     }
 
     /**

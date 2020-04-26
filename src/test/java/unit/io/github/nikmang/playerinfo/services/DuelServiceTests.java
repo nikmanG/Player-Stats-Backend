@@ -177,25 +177,4 @@ public class DuelServiceTests {
 
         assertEquals(0, matches.size());
     }
-
-    @Test
-    public void whenRetrievingWonMatchesOnly() {
-        //Given
-        DuelMatch wonMatch = new DuelMatch();
-        wonMatch.setMatchDate(new Date(1587355200000L));
-        wonMatch.setWinner(player1);
-
-        DuelMatch lostMatch = new DuelMatch();
-        lostMatch.setMatchDate(new Date(1555732800000L));
-        lostMatch.setWinner(player2);
-
-        when(duelMatchRepository.findAllByPlayer(1L)).thenReturn(Arrays.asList(lostMatch, wonMatch));
-
-        //When
-        List<DuelMatch> wonMatches = duelService.retrieveAllWonMatchesForPlayer(1L);
-
-        //Then
-        assertEquals(1, wonMatches.size());
-        assertEquals(wonMatch.getMatchDate(), wonMatches.get(0).getMatchDate());
-    }
 }

@@ -1,6 +1,5 @@
 package io.github.nikmang.playerinfo.controllers;
 
-import io.github.nikmang.playerinfo.models.Player;
 import io.github.nikmang.playerinfo.models.Team;
 import io.github.nikmang.playerinfo.models.duelling.DuelMatch;
 import io.github.nikmang.playerinfo.models.duelling.DuelPlayer;
@@ -79,19 +78,14 @@ public class DuelController {
                     .notFound()
                     .build();
         }
+
         return ResponseEntity
                 .ok()
                 .body(duelPlayer);
     }
 
     @GetMapping("history")
-    public ResponseEntity<List<DuelMatch>> getMatchHistory(@RequestParam long id, @RequestParam boolean winsOnly) {
-        if(winsOnly) {
-            return ResponseEntity
-                    .ok()
-                    .body(duelService.retrieveAllWonMatchesForPlayer(id));
-        }
-
+    public ResponseEntity<List<DuelMatch>> getMatchHistory(@RequestParam long id) {
         return ResponseEntity
                 .ok()
                 .body(duelService.retrieveAllMatchesForPlayer(id));

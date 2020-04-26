@@ -3,8 +3,10 @@ package io.github.nikmang.playerinfo.services;
 import io.github.nikmang.playerinfo.enums.TeamType;
 import io.github.nikmang.playerinfo.models.Player;
 import io.github.nikmang.playerinfo.models.Team;
+import io.github.nikmang.playerinfo.models.quidditch.QuidditchTeam;
 import io.github.nikmang.playerinfo.repositories.PlayerRepository;
 import io.github.nikmang.playerinfo.repositories.TeamRepository;
+import io.github.nikmang.playerinfo.repositories.quidditch.QuidditchTeamRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -18,10 +20,15 @@ public class TeamService {
 
     private TeamRepository teamRepository;
     private PlayerRepository playerRepository;
+    private QuidditchTeamRepository quidditchTeamRepository;
 
-    public TeamService(TeamRepository teamRepository, PlayerRepository playerRepository) {
+    public TeamService(
+            TeamRepository teamRepository,
+            PlayerRepository playerRepository,
+            QuidditchTeamRepository quidditchTeamRepository) {
         this.teamRepository = teamRepository;
         this.playerRepository = playerRepository;
+        this.quidditchTeamRepository = quidditchTeamRepository;
     }
 
     /**
@@ -57,11 +64,20 @@ public class TeamService {
     /**
      * Saves team to repository.
      *
-     * @param team Team to be saved.
+     * @param teamName Team name
+     * @param teamType Type of team
      *
      * @return Team that was saved. Main difference would be the added internal ID
      */
-    public Team addTeam(Team team) {
+    public Team addTeam(String teamName, TeamType teamType) {
+        Team team = createTeam(teamName, teamType);
+
+        if(teamType == TeamType.QUIDDITCH) {
+            QuidditchTeam quidditchTeam = new QuidditchTeam();
+            quidditchTeam.setTeam(team);
+            quidditchTeamRepository.save(quidditchTeam);
+        }
+
         return this.teamRepository.save(team);
     }
 

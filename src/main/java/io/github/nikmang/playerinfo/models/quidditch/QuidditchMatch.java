@@ -26,10 +26,10 @@ public class QuidditchMatch {
     private Team loser;
 
     @NotNull
-    private int winnerScore;
+    private long winnerScore;
 
     @NotNull
-    private int loserScore;
+    private long loserScore;
 
     @OneToOne
     private Player snitchCatcher;
