@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<testsuite failures="0" name="cucumber.runtime.formatter.JUnitFormatter" skipped="1" tests="1" time="0.00478">
+    <testcase classname="the version can be retrieved" name="client makes call to homepage" time="0.00478">
+        <skipped>
+            <![CDATA[When the client pings the server............................................undefined
+Then the client receives status code of 200.................................undefined
+And the client receives the message 'This is the API backend. API calls ony.'.undefined
+]]>
+        </skipped>
+    </testcase>
+</testsuite>

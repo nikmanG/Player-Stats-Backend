@@ -16,8 +16,6 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -173,7 +171,7 @@ public class DuelServiceTests {
         List<DuelMatch> matches = duelService.retrieveAllMatchesForPlayer(pl.getId());
 
         //Then
-        verify(playerRepository, times(1)).findById(eq(pl.getId()));
+        verify(duelMatchRepository, times(1)).findAllByPlayer(eq(pl.getId()));
 
         assertEquals(0, matches.size());
     }

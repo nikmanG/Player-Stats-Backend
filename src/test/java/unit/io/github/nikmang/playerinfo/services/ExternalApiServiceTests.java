@@ -12,6 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -60,11 +61,25 @@ public class ExternalApiServiceTests {
                 .thenThrow(new HttpClientErrorException(HttpStatus.BAD_REQUEST));
 
         when(restTemplate.getForObject(matches("https://playerdb.co/api/player/minecraft/abc-123-45678"), any())).thenReturn(packet);
+
         //When
         externalApiService.getPlayerName("abc-123-45678");
 
         //Then
         verify(restTemplate, times(2)).getForObject(anyString(), any());
         verify(restTemplate, times(1)).getForObject(matches("https://playerdb.co/api/player/minecraft/abc-123-45678"), any());
+    }
+
+    @Test
+    public void whenBothUrlsThrowException() {
+        //Given
+        when(restTemplate.getForObject(any(), any())).thenThrow(new HttpClientErrorException(HttpStatus.BAD_REQUEST));
+
+        //When
+        String result = externalApiService.getPlayerName("abc-123-45678");
+
+        //Then
+        verify(restTemplate, times(2)).getForObject(anyString(), any());
+        assertNull(result);
     }
 }

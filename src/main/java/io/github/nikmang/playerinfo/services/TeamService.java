@@ -81,6 +81,12 @@ public class TeamService {
         return this.teamRepository.save(team);
     }
 
+    /**
+     * Add player to a team. Both values <i>must</i> be not null.
+     *
+     * @param team Team to get player
+     * @param player Player to be added
+     */
     public void addPlayerToTeam(Team team, Player player) {
        team.getPlayers().add(player);
         teamRepository.save(team);
