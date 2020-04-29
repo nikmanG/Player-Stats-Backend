@@ -14,6 +14,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
@@ -79,6 +80,16 @@ public class DuelServiceTests {
                 teamRepository,
                 duelPlayerRepository,
                 duelMatchRepository);
+    }
+
+    @Test
+    public void whenGettingAllPlayers() {
+        //Given
+        //When
+        duelService.getAllPlayers();
+
+        //Then
+        verify(duelPlayerRepository, times(1)).findAll(eq(Sort.by("elo").descending()));
     }
 
     @Test
