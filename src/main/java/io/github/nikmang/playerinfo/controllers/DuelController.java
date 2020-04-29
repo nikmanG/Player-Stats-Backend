@@ -27,14 +27,14 @@ public class DuelController {
         this.externalApiService = externalApiService;
     }
 
-    @PostMapping("record")
+    @PostMapping("private/record")
     public ResponseEntity<DuelMatch> addMatch(@RequestBody MatchRecord matchRecord) {
         return ResponseEntity
                 .ok()
                 .body(duelService.recordMatch(matchRecord.winner, matchRecord.loser));
     }
 
-    @GetMapping("all")
+    @GetMapping("public/all")
     public ResponseEntity<List<DuelPlayer>> getPlayers() {
         List<DuelPlayer> getPlayers = duelService.getAllPlayers();
 
@@ -52,14 +52,14 @@ public class DuelController {
                 .body(getPlayers);
     }
 
-    @GetMapping("all_teams")
+    @GetMapping("public/all_teams")
     public ResponseEntity<List<Team>> getTeams() {
         return ResponseEntity
                 .ok()
                 .body(duelService.getTeams());
     }
 
-    @GetMapping("profile")
+    @GetMapping("public/profile")
     public ResponseEntity<DuelPlayer> getPlayerData(@RequestParam String uuid) {
         DuelPlayer pl = duelService.getPlayerProfile(uuid);
         pl.getPlayer().setName(externalApiService.getPlayerName(uuid));
@@ -69,7 +69,7 @@ public class DuelController {
                 .body(pl);
     }
 
-    @GetMapping("find/{playerId}")
+    @GetMapping("public/find/{playerId}")
     public ResponseEntity<DuelPlayer> getPlayerById(@PathVariable long playerId) {
         DuelPlayer duelPlayer = duelService.getPlayerProfile(playerId);
 
@@ -84,7 +84,7 @@ public class DuelController {
                 .body(duelPlayer);
     }
 
-    @GetMapping("history")
+    @GetMapping("public/history")
     public ResponseEntity<List<DuelMatch>> getMatchHistory(@RequestParam long id) {
         return ResponseEntity
                 .ok()

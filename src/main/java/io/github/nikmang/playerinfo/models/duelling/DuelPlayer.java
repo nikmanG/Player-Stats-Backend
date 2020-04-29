@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 public class DuelPlayer {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
     @OneToOne

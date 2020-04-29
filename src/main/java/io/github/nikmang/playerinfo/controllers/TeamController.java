@@ -23,14 +23,14 @@ public class TeamController {
         this.externalApiService = externalApiService;
     }
 
-    @PostMapping("add")
+    @PostMapping("private/add")
     public ResponseEntity<Team> addTeam(@RequestBody TeamWrapper teamWrapper) {
         return ResponseEntity
                 .ok()
                 .body(teamService.addTeam(teamWrapper.name, TeamType.valueOf(teamWrapper.teamType.toUpperCase())));
     }
 
-    @GetMapping("find/{id}")
+    @GetMapping("public/find/{id}")
     public Team getIndividualTeam(@PathVariable long id) {
         Team team = teamService.getTeamById(id);
 
@@ -39,7 +39,7 @@ public class TeamController {
         return team;
     }
 
-    @GetMapping("player/{playerId}")
+    @GetMapping("public/player/{playerId}")
     public Map<TeamType, Team> getTeamsForPlayer(@PathVariable long playerId) {
         return teamService.getTeamsByPlayerId(playerId);
     }

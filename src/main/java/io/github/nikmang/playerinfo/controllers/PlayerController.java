@@ -27,14 +27,14 @@ public class PlayerController {
         this.teamService = teamService;
     }
 
-    @PostMapping(value = "add", consumes = {"application/json"})
+    @PostMapping("private/add")
     public ResponseEntity<Player> addPlayer(@RequestBody UuidWrapper wrapper) {
         return ResponseEntity
                 .ok()
                 .body(playerService.addPlayer(wrapper.uuid));
     }
 
-    @GetMapping("join")
+    @GetMapping("private/join")
     public ResponseEntity<Team> joinPlayerAndTeam(@RequestParam long playerId, @RequestParam long teamId) {
         Team t = teamService.getTeamById(teamId);
         Player p = playerService.getPlayer(playerId);
@@ -44,7 +44,7 @@ public class PlayerController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("find/{playerId}")
+    @GetMapping("public/find/{playerId}")
     public ResponseEntity<Player> getPlayerById(@PathVariable long playerId) {
         Player player = playerService.getPlayer(playerId);
 

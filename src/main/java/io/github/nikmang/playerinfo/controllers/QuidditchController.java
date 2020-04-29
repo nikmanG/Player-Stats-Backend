@@ -20,7 +20,7 @@ public class QuidditchController {
         this.quidditchService = quidditchService;
     }
 
-    @PostMapping("record")
+    @PostMapping("private/record")
     public ResponseEntity<QuidditchMatch> addMatch(@RequestBody MatchRecord matchRecord) {
         return ResponseEntity
                 .ok()
@@ -32,21 +32,21 @@ public class QuidditchController {
                         matchRecord.catcherUuid));
     }
 
-    @GetMapping("all")
+    @GetMapping("public/all")
     public ResponseEntity<List<QuidditchTeam>> getTeams() {
         return ResponseEntity
                 .ok()
                 .body(quidditchService.getTeams());
     }
 
-    @GetMapping("find/{teamId}")
+    @GetMapping("public/find/{teamId}")
     public ResponseEntity<QuidditchTeam> getTeamById(@PathVariable long teamId) {
         return ResponseEntity
                 .ok()
                 .body(quidditchService.getByTeamId(teamId));
     }
 
-    @GetMapping("history")
+    @GetMapping("public/history")
     public ResponseEntity<List<QuidditchMatch>> getMatchHistory(@RequestParam long id) {
         return ResponseEntity
                 .ok()

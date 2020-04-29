@@ -13,7 +13,7 @@ import java.util.Date;
 public class DuelMatch {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
     @OneToOne
