@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 @RunWith(SpringRunner.class)
 public class ExternalApiServiceTests {
 
-    private ExternalApiService externalApiService;
+    private ExternalApiService context;
 
     @MockBean
     private PlayerRepository playerRepository;
@@ -33,7 +33,7 @@ public class ExternalApiServiceTests {
         RestTemplateBuilder templateBuilder = mock(RestTemplateBuilder.class);
 
         when(templateBuilder.build()).thenReturn(restTemplate);
-        externalApiService = new ExternalApiService(playerRepository, templateBuilder);
+        context = new ExternalApiService(playerRepository, templateBuilder);
     }
 
     @Test
@@ -42,7 +42,7 @@ public class ExternalApiServiceTests {
         when(restTemplate.getForObject(anyString(), any())).thenReturn(new ExternalApiService.MinecraftNamePacket());
 
         //When
-        externalApiService.getPlayerName("abc-123-45678");
+        context.getPlayerName("abc-123-45678");
 
         //Then
         verify(restTemplate, times(1)).getForObject(anyString(), any());
@@ -63,7 +63,7 @@ public class ExternalApiServiceTests {
         when(restTemplate.getForObject(matches("https://playerdb.co/api/player/minecraft/abc-123-45678"), any())).thenReturn(packet);
 
         //When
-        externalApiService.getPlayerName("abc-123-45678");
+        context.getPlayerName("abc-123-45678");
 
         //Then
         verify(restTemplate, times(2)).getForObject(anyString(), any());
@@ -76,7 +76,7 @@ public class ExternalApiServiceTests {
         when(restTemplate.getForObject(any(), any())).thenThrow(new HttpClientErrorException(HttpStatus.BAD_REQUEST));
 
         //When
-        String result = externalApiService.getPlayerName("abc-123-45678");
+        String result = context.getPlayerName("abc-123-45678");
 
         //Then
         verify(restTemplate, times(2)).getForObject(anyString(), any());

@@ -57,7 +57,7 @@ public class QuidditchService {
         }
 
         if(loser == null) {
-            loser = createTeam(winnerTeamName);
+            loser = createTeam(loserTeamName);
         }
 
         QuidditchTeam winnerTeam = quidditchTeamRepository.getByTeamId(winner.getId());
@@ -98,14 +98,31 @@ public class QuidditchService {
         return quidditchMatch;
     }
 
+    /**
+     * Gets Team by team Id.
+     *
+     * @param teamId Team ID as seen in database
+     * @return Team with given Team ID or <i>null</i> if not found
+     */
     public QuidditchTeam getByTeamId(long teamId) {
         return quidditchTeamRepository.getByTeamId(teamId);
     }
 
+    /**
+     * Gets all matches for a team.
+     *
+     * @param teamId Team ID as saved in database
+     * @return List of matches team has played in. This is not ordered
+     */
     public List<QuidditchMatch> retrieveAllMatchesForTeam(long teamId) {
         return quidditchMatchRepository.findAllByTeam(teamId);
     }
 
+    /**
+     * Gets all teams for quidditch in order of wins descending.
+     *
+     * @return All quidditch teams in descending order by number of wins
+     */
     public List<QuidditchTeam> getTeams() {
         return quidditchTeamRepository.findAll(Sort.by("team.wins").descending());
     }

@@ -77,7 +77,7 @@ public class TeamService {
             quidditchTeamRepository.save(quidditchTeam);
         }
 
-        return this.teamRepository.save(team);
+        return team;
     }
 
     /**

@@ -1,6 +1,5 @@
 package unit.io.github.nikmang.playerinfo.services;
 
-import cucumber.api.java8.Pl;
 import io.github.nikmang.playerinfo.models.Player;
 import io.github.nikmang.playerinfo.repositories.PlayerRepository;
 import io.github.nikmang.playerinfo.services.PlayerService;
@@ -17,7 +16,7 @@ import static org.mockito.Mockito.*;
 @RunWith(SpringRunner.class)
 public class PlayerServiceTests {
 
-    private PlayerService playerService;
+    private PlayerService context;
 
     @MockBean
     private PlayerRepository playerRepository;
@@ -25,14 +24,14 @@ public class PlayerServiceTests {
 
     @Before
     public void setup() {
-        playerService = new PlayerService(playerRepository);
+        context = new PlayerService(playerRepository);
     }
 
     @Test
     public void whenAddingNewPlayer() {
         //Given
         //When
-        playerService.addPlayer("12345");
+        context.addPlayer("12345");
 
         //Then
         verify(playerRepository, times(1)).save(any());
@@ -45,7 +44,7 @@ public class PlayerServiceTests {
         when(playerRepository.findByUuid(anyString())).thenReturn(new Player());
 
         //When
-        playerService.addPlayer("12345");
+        context.addPlayer("12345");
 
         //Then
         verify(playerRepository, never()).save(any());
@@ -56,7 +55,7 @@ public class PlayerServiceTests {
     public void whenGettingPlayer() {
         //Given
         //When
-        playerService.getPlayer(1);
+        context.getPlayer(1);
 
         //Then
         verify(playerRepository, times(1)).findById(eq(1L));

@@ -29,7 +29,7 @@ public class DuelServiceTests {
     private static Player player1;
     private static Player player2;
 
-    private DuelService duelService;
+    private DuelService context;
 
     @MockBean
     private PlayerRepository playerRepository;
@@ -75,7 +75,7 @@ public class DuelServiceTests {
         when(duelPlayerRepository.findByPlayer(eq(1L))).thenReturn(duelPlayer1);
         when(duelPlayerRepository.findByPlayer(eq(2L))).thenReturn(duelPlayer2);
 
-        this.duelService = new DuelService(
+        this.context = new DuelService(
                 playerRepository,
                 teamRepository,
                 duelPlayerRepository,
@@ -86,7 +86,7 @@ public class DuelServiceTests {
     public void whenGettingAllPlayers() {
         //Given
         //When
-        duelService.getAllPlayers();
+        context.getAllPlayers();
 
         //Then
         verify(duelPlayerRepository, times(1)).findAll(eq(Sort.by("elo").descending()));
@@ -96,7 +96,7 @@ public class DuelServiceTests {
     public void whenMatchRecorded() {
         //Given
         //When
-        DuelMatch duelMatch = duelService.recordMatch(
+        DuelMatch duelMatch = context.recordMatch(
                 "1461170a-ce2b-4894-9713-ee476a2c703a",
                 "367acdd7-ec2c-4e27-9478-31c1fe5cde8a");
 
@@ -118,7 +118,7 @@ public class DuelServiceTests {
     public void whenGettingTeams() {
         //Given
         //When
-        duelService.getTeams();
+        context.getTeams();
 
         //Then
         verify(teamRepository, times(1)).findAllTeamsByType(TeamType.DUEL.toString());
@@ -128,7 +128,7 @@ public class DuelServiceTests {
     public void whenGettingExistingPlayer() {
         //Given
         //When
-        DuelPlayer pl = duelService.getPlayerProfile("1461170a-ce2b-4894-9713-ee476a2c703a");
+        DuelPlayer pl = context.getPlayerProfile("1461170a-ce2b-4894-9713-ee476a2c703a");
 
         //Then
         verify(playerRepository, times(1)).findByUuid("1461170a-ce2b-4894-9713-ee476a2c703a");
@@ -147,7 +147,7 @@ public class DuelServiceTests {
         pl.setId(3L);
 
         //When
-        DuelPlayer duelPlayer = duelService.getPlayerProfile(pl.getUuid());
+        DuelPlayer duelPlayer = context.getPlayerProfile(pl.getUuid());
 
         //Then
         verify(playerRepository, times(1)).findByUuid("123");
@@ -164,7 +164,7 @@ public class DuelServiceTests {
         pl.setId(3L);
 
         //When
-        DuelPlayer duelPlayer = duelService.getPlayerProfile(pl.getId());
+        DuelPlayer duelPlayer = context.getPlayerProfile(pl.getId());
 
         //Then
         verify(playerRepository, times(1)).findById(pl.getId());
@@ -179,7 +179,7 @@ public class DuelServiceTests {
         pl.setUuid("123");
 
         //When
-        List<DuelMatch> matches = duelService.retrieveAllMatchesForPlayer(pl.getId());
+        List<DuelMatch> matches = context.retrieveAllMatchesForPlayer(pl.getId());
 
         //Then
         verify(duelMatchRepository, times(1)).findAllByPlayer(eq(pl.getId()));
