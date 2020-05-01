@@ -14,7 +14,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@CrossOrigin
+
+@CrossOrigin(
+        allowCredentials = "true",
+        origins = "*",
+        allowedHeaders = "*",
+        methods = {RequestMethod.GET,RequestMethod.POST,RequestMethod.DELETE,RequestMethod.PUT}
+)
 @Controller
 @RequestMapping("/duel")
 public class DuelController {

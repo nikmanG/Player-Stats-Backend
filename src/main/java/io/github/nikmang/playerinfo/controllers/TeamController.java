@@ -10,7 +10,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-@CrossOrigin
+
+@CrossOrigin(
+        allowCredentials = "true",
+        origins = "*",
+        allowedHeaders = "*",
+        methods = {RequestMethod.GET,RequestMethod.POST,RequestMethod.DELETE,RequestMethod.PUT}
+)
 @RestController
 @RequestMapping("/team")
 public class TeamController {

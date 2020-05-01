@@ -9,7 +9,13 @@ import lombok.Data;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin
+
+@CrossOrigin(
+        allowCredentials = "true",
+        origins = "*",
+        allowedHeaders = "*",
+        methods = {RequestMethod.GET,RequestMethod.POST,RequestMethod.DELETE,RequestMethod.PUT}
+)
 @RestController
 @RequestMapping("/player")
 public class PlayerController {
