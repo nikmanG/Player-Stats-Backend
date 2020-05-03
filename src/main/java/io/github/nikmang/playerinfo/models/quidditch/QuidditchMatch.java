@@ -1,8 +1,10 @@
 package io.github.nikmang.playerinfo.models.quidditch;
 
+import io.github.nikmang.playerinfo.models.Match;
 import io.github.nikmang.playerinfo.models.Player;
 import io.github.nikmang.playerinfo.models.Team;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -11,7 +13,7 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "Quidditch_Match")
-public class QuidditchMatch {
+public class QuidditchMatch implements Match {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -36,4 +38,9 @@ public class QuidditchMatch {
 
     @NotNull
     private Date matchDate;
+
+    @Override
+    public boolean wasTie() {
+        return winnerScore == loserScore && snitchCatcher == null;
+    }
 }

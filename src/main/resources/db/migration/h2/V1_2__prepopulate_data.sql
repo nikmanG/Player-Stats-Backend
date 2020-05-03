@@ -84,6 +84,7 @@ VALUES (1, '2020-04-21 20:41:28.824', 150, 70, 1, 2, 1),
        (5, '2020-04-21 20:41:28.824', 200, 10, 1, 2, 1);
 
 INSERT INTO `Quidditch_Match` (id, match_date, winner_score, loser_score, winner_id, loser_id)
-VALUES (6, '2020-03-21 20:41:28.824', 80, 70, 1, 2);
+VALUES (6, '2020-03-21 20:41:28.824', 80, 70, 1, 2),
+       (7, '2020-05-21 20:41:28.824', 180, 180, 3, 4);
 
 CREATE SEQUENCE HIBERNATE_SEQUENCE START WITH 999 INCREMENT BY 1;

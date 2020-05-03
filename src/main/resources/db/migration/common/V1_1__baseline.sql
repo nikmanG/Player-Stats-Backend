@@ -1,3 +1,4 @@
+
 create table duel_match (
                             id bigint not null,
                             match_date timestamp not null,
@@ -21,10 +22,17 @@ create table duel_player (
 
 create table player (
                         id bigint not null,
-                        name varchar(255),
-                        timestamp_of_retrieval bigint,
                         uuid varchar(36) not null,
                         primary key (id)
+);
+
+create table player_match_event (
+                                    id bigint not null,
+                                    event_type integer not null,
+                                    match_date timestamp not null,
+                                    player1_id bigint not null,
+                                    player2_id bigint not null,
+                                    primary key (id)
 );
 
 create table player_team (
@@ -54,12 +62,22 @@ create table quidditch_team (
 
 create table team (
                       id bigint not null,
+                      draws integer default 0 not null,
                       logo_url varchar(255),
                       losses integer default 0 not null,
                       name varchar(20) not null,
                       team_type varchar(255) not null,
                       wins integer default 0 not null,
                       primary key (id)
+);
+
+create table team_match_event (
+                                  id bigint not null,
+                                  event_type integer not null,
+                                  match_date timestamp not null,
+                                  team1_id bigint not null,
+                                  team2_id bigint not null,
+                                  primary key (id)
 );
 
 alter table player
@@ -87,6 +105,16 @@ alter table duel_match
 alter table duel_player
     add constraint FKr9u59jtbatr4245webwgwvtm7
         foreign key (player_id)
+            references player;
+
+alter table player_match_event
+    add constraint FKf6owq8rcrqd4yirmm9ltm744f
+        foreign key (player1_id)
+            references player;
+
+alter table player_match_event
+    add constraint FKga8n2ixikyrlhucwyaay40rgg
+        foreign key (player2_id)
             references player;
 
 alter table player_team
@@ -117,4 +145,14 @@ alter table quidditch_match
 alter table quidditch_team
     add constraint FKt7d6qgg7i5rfuebdo68dc2cp0
         foreign key (team_id)
+            references team;
+
+alter table team_match_event
+    add constraint FK4eb04ey2gwwq4o1hafxnq96cr
+        foreign key (team1_id)
+            references team;
+
+alter table team_match_event
+    add constraint FK61e4e4dpi2nn0fsor93ff4a6n
+        foreign key (team2_id)
             references team;

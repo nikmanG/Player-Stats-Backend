@@ -17,9 +17,9 @@ import java.util.Set;
 @Table(name = "Team", uniqueConstraints = {
         @UniqueConstraint(columnNames =  {"name", "teamType"})
 })
-@EqualsAndHashCode(exclude = "players")
+@EqualsAndHashCode(exclude = "players", callSuper = false)
 @ToString(exclude = "players")
-public class Team {
+public class Team implements Competitor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -48,4 +48,12 @@ public class Team {
 
     @ColumnDefault("0")
     private int losses;
+
+    @ColumnDefault("0")
+    private int draws;
+
+    @Override
+    public Long getIdentifier() {
+        return id;
+    }
 }

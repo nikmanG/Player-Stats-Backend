@@ -1,6 +1,7 @@
 package io.github.nikmang.playerinfo.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -13,9 +14,9 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "Player")
-@EqualsAndHashCode(exclude = "teams")
+@EqualsAndHashCode(exclude = "teams", callSuper = false)
 @ToString(exclude = "teams")
-public class Player {
+public class Player implements Competitor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -34,7 +35,16 @@ public class Player {
             inverseJoinColumns = @JoinColumn(name = "team_id"))
     Set<Team> teams;
 
+    @Transient
+    @JsonInclude
     private String name;
 
+    @Transient
+    @JsonInclude
     private Long timestampOfRetrieval;
+
+    @Override
+    public Long getIdentifier() {
+        return id;
+    }
 }

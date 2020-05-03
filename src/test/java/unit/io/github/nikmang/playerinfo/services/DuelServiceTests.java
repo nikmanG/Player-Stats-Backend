@@ -101,8 +101,8 @@ public class DuelServiceTests {
                 "367acdd7-ec2c-4e27-9478-31c1fe5cde8a");
 
         //Then
-        assertEquals(duelMatch.getWinner().getName(), "sirNik");
-        assertEquals(duelMatch.getLoser().getName(), "Felixx61");
+        assertEquals(((Player) duelMatch.getWinner()).getName(), "sirNik");
+        assertEquals(((Player) duelMatch.getLoser()).getName(), "Felixx61");
 
         assertEquals(1100L, duelMatch.getOldWinnerElo());
         assertEquals(1200L, duelMatch.getOldLoserElo());

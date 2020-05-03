@@ -63,8 +63,8 @@ public class QuidditchServiceTests {
 
         verify(quidditchMatchRepository, times(1)).save(any());
 
-        assertEquals("TEAM1", match.getWinner().getName());
-        assertEquals("TEAM2", match.getLoser().getName());
+        assertEquals("TEAM1", ((Team) match.getWinner()).getName());
+        assertEquals("TEAM2", ((Team) match.getLoser()).getName());
         assertEquals(190, match.getWinnerScore());
         assertEquals(180, match.getLoserScore());
 
@@ -105,8 +105,8 @@ public class QuidditchServiceTests {
 
         verify(quidditchMatchRepository, times(1)).save(any());
 
-        assertEquals("TEAM1", match.getWinner().getName());
-        assertEquals("TEAM2", match.getLoser().getName());
+        assertEquals("TEAM1", ((Team) match.getWinner()).getName());
+        assertEquals("TEAM2", ((Team) match.getLoser()).getName());
         assertEquals(190, match.getWinnerScore());
         assertEquals(180, match.getLoserScore());
 
