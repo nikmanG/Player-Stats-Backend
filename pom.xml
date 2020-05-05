@@ -100,7 +100,7 @@
 			<artifactId>flyway-core</artifactId>
 			<version>6.4.0</version>
 		</dependency>
-		Postgres for prod
+<!--		Postgres for prod-->
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
