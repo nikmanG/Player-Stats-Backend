@@ -11,6 +11,12 @@ import org.springframework.web.bind.annotation.*;
 )
 @RestController
 public class HomeController {
+    /**
+     * Retrieves the homepage for the backend.
+     * There is no proper page for this.
+     *
+     * @return A string to tell you that there is no backend landing page
+     */
     @RequestMapping
     public String welcome() {
         return "This is the API backend. API calls only.";

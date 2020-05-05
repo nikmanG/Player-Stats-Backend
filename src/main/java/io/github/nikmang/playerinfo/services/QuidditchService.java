@@ -80,15 +80,20 @@ public class QuidditchService {
 
         winnerTeam.addPoints(winnerScore, loserScore);
         loserTeam.addPoints(loserScore, winnerScore);
-
-        winner.setWins(winner.getWins() + 1);
-        loser.setLosses(winner.getLosses() + 1);
         
         quidditchMatch.setWinner(winner);
         quidditchMatch.setLoser(loser);
 
         if(catcherUuid != null) {
             quidditchMatch.setSnitchCatcher(playerRepository.findByUuid(catcherUuid));
+        }
+
+        if(quidditchMatch.wasTie()) {
+            winner.setDraws(winner.getDraws() + 1);
+            loser.setDraws(loser.getDraws() + 1);
+        } else {
+            winner.setWins(winner.getWins() + 1);
+            loser.setLosses(winner.getLosses() + 1);
         }
 
         quidditchTeamRepository.saveAll(Arrays.asList(winnerTeam, loserTeam));

@@ -10,4 +10,6 @@ public interface Match {
     Date getMatchDate();
 
     Competitor getWinner();
+
+    Competitor getLoser();
 }

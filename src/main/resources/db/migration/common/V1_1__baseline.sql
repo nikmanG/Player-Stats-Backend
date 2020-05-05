@@ -1,4 +1,3 @@
-
 create table duel_match (
                             id bigint not null,
                             match_date timestamp not null,
@@ -20,6 +19,19 @@ create table duel_player (
                              primary key (id)
 );
 
+create table event_group (
+                             id bigint not null,
+                             end_date timestamp not null,
+                             name varchar(255) not null,
+                             start_date timestamp not null,
+                             primary key (id)
+);
+
+create table event_group_matches (
+                                     event_group_id bigint not null,
+                                     matches_id bigint not null
+);
+
 create table player (
                         id bigint not null,
                         uuid varchar(36) not null,
@@ -28,7 +40,7 @@ create table player (
 
 create table player_match_event (
                                     id bigint not null,
-                                    event_type integer not null,
+                                    event_type varchar(255) not null,
                                     match_date timestamp not null,
                                     player1_id bigint not null,
                                     player2_id bigint not null,
@@ -73,12 +85,20 @@ create table team (
 
 create table team_match_event (
                                   id bigint not null,
-                                  event_type integer not null,
+                                  event_type varchar(255) not null,
                                   match_date timestamp not null,
                                   team1_id bigint not null,
                                   team2_id bigint not null,
                                   primary key (id)
 );
+
+create sequence hibernate_sequence start with 1 increment by 1;
+
+alter table event_group_matches
+    drop constraint if exists UK_80dt4nn7o0knlmebvyk96in27;
+
+alter table event_group_matches
+    add constraint UK_80dt4nn7o0knlmebvyk96in27 unique (matches_id);
 
 alter table player
     drop constraint if exists UK_57ulfn2rdt6btajrr5p2gee5c;
@@ -106,6 +126,11 @@ alter table duel_player
     add constraint FKr9u59jtbatr4245webwgwvtm7
         foreign key (player_id)
             references player;
+
+alter table event_group_matches
+    add constraint FKrd0f5qukx9sysi8mvd3l4k8r2
+        foreign key (event_group_id)
+            references event_group;
 
 alter table player_match_event
     add constraint FKf6owq8rcrqd4yirmm9ltm744f

@@ -1,6 +1,7 @@
 package io.github.nikmang.playerinfo.models.events;
 
 import io.github.nikmang.playerinfo.enums.EventType;
+import io.github.nikmang.playerinfo.models.Competitor;
 import io.github.nikmang.playerinfo.models.Team;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -23,4 +24,14 @@ public class TeamMatchEvent extends MatchEvent {
     @NotNull
     @OneToOne
     private Team team2;
+
+    @Override
+    public Competitor getCompetitor1() {
+        return team1;
+    }
+
+    @Override
+    public Competitor getCompetitor2() {
+        return team2;
+    }
 }

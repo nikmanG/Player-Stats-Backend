@@ -100,13 +100,12 @@
 			<artifactId>flyway-core</artifactId>
 			<version>6.4.0</version>
 		</dependency>
-		<!--Postgres for prod-->
-		<!--		<dependency>-->
-<!--			<groupId>org.postgresql</groupId>-->
-<!--			<artifactId>postgresql</artifactId>-->
-<!--			<scope>runtime</scope>-->
-<!--		</dependency>-->
-		<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+		Postgres for prod
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
 		<!--cucumber and dependencies-->
 		<dependency>
 			<groupId>commons-io</groupId>

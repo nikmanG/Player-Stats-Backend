@@ -87,4 +87,34 @@ INSERT INTO `Quidditch_Match` (id, match_date, winner_score, loser_score, winner
 VALUES (6, '2020-03-21 20:41:28.824', 80, 70, 1, 2),
        (7, '2020-05-21 20:41:28.824', 180, 180, 3, 4);
 
-CREATE SEQUENCE HIBERNATE_SEQUENCE START WITH 999 INCREMENT BY 1;
+/* Events */
+INSERT INTO `Team_Match_Event` (id, event_type, match_date, team1_id, team2_id)
+VALUES (1, 'QUIDDITCH', '2020-08-21 20:41:28.824', 1, 2),
+       (2, 'QUIDDITCH', '2020-05-27 20:41:28.824', 4, 3),
+       (3, 'QUIDDITCH', '2020-05-27 20:41:28.824', 1, 3),
+       (4, 'QUIDDITCH', '2020-06-01 20:41:28.824', 4, 1),
+       (5, 'QUIDDITCH', '2020-06-02 20:41:28.824', 4, 2),
+       (6, 'QUIDDITCH', '2020-06-03 20:41:28.824', 2, 3),
+       (7, 'QUIDDITCH', '2020-06-03 20:41:28.824', 4, 3),
+       (8, 'QUIDDITCH', '2020-06-04 20:41:28.824', 1, 2);
+
+INSERT INTO `Player_Match_Event` (id, event_type, match_date, player1_id, player2_id)
+VALUES (1, 'DUEL_SINGLE', '2020-06-21 20:41:28.824', 1, 2),
+       (2, 'DUEL_SINGLE', '2020-05-27 20:41:28.824', 5, 10),
+       (3, 'DUEL_SINGLE', '2020-05-27 20:41:28.824', 4, 3),
+       (4, 'DUEL_SINGLE', '2020-05-27 20:41:28.824', 1, 3),
+       (5, 'DUEL_SINGLE', '2020-05-27 20:41:28.824', 4, 2),
+       (6, 'DUEL_SINGLE', '2020-05-27 20:41:28.824', 3, 2),
+       (7, 'DUEL_SINGLE', '2020-05-27 20:41:28.824', 4, 3);
+
+INSERT INTO `Event_Group` (id, name, start_date, end_date)
+VALUES (1, 'Quidditch House Cup', '2020-06-01 00:00:00.00', '2020-07-01 00:00:00.00');
+
+INSERT INTO `Event_Group_Matches` (event_group_id, matches_id)
+VALUES (1, 2),
+       (1, 3),
+       (1, 4),
+       (1, 5),
+       (1, 6),
+       (1, 7),
+       (1, 8);
