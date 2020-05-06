@@ -1,9 +1,11 @@
 package io.github.nikmang.playerinfo.services;
 
 import io.github.nikmang.playerinfo.enums.TeamType;
+import io.github.nikmang.playerinfo.models.League;
 import io.github.nikmang.playerinfo.models.Team;
 import io.github.nikmang.playerinfo.models.quidditch.QuidditchMatch;
 import io.github.nikmang.playerinfo.models.quidditch.QuidditchTeam;
+import io.github.nikmang.playerinfo.repositories.LeagueRepository;
 import io.github.nikmang.playerinfo.repositories.PlayerRepository;
 import io.github.nikmang.playerinfo.repositories.TeamRepository;
 import io.github.nikmang.playerinfo.repositories.quidditch.QuidditchMatchRepository;
@@ -12,8 +14,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class QuidditchService {
@@ -22,13 +26,16 @@ public class QuidditchService {
     private final PlayerRepository playerRepository;
     private final QuidditchMatchRepository quidditchMatchRepository;
     private final QuidditchTeamRepository quidditchTeamRepository;
+    private final LeagueRepository leagueRepository;
 
     public QuidditchService(TeamRepository teamRepository,
                             PlayerRepository playerRepository,
+                            LeagueRepository leagueRepository,
                             QuidditchMatchRepository quidditchMatchRepository,
                             QuidditchTeamRepository quidditchTeamRepository) {
         this.teamRepository = teamRepository;
         this.playerRepository = playerRepository;
+        this.leagueRepository = leagueRepository;
         this.quidditchMatchRepository = quidditchMatchRepository;
         this.quidditchTeamRepository = quidditchTeamRepository;
     }
@@ -101,6 +108,25 @@ public class QuidditchService {
         teamRepository.saveAll(Arrays.asList(winner, loser));
 
         return quidditchMatch;
+    }
+
+    /**
+     * Retrieves a list of quidditch teams by providing a league ID.
+     *
+     * @param leagueId League Id for which to get teams
+     *
+     * @return list of quidditch teams in league. <b>Empty list</b> if league not found or league not for quidditch
+     */
+    public List<QuidditchTeam> getTeamsForLeague(long leagueId) {
+        League league = leagueRepository.findById(leagueId).orElse(null);
+
+        if(league == null || league.getLeagueType() != TeamType.QUIDDITCH) {
+            return Collections.emptyList();
+        }
+
+        List<Long> ids = league.getTeams().stream().map(Team::getId).collect(Collectors.toList());
+
+        return quidditchTeamRepository.getQuidditchTeamsInTeamsList(ids);
     }
 
     /**

@@ -95,12 +95,12 @@
 			<scope>runtime</scope>
 			<version>1.4.194</version>
 		</dependency>
-		<dependency>
-			<groupId>org.flywaydb</groupId>
-			<artifactId>flyway-core</artifactId>
-			<version>6.4.0</version>
-		</dependency>
-<!--		Postgres for prod-->
+<!--		<dependency>-->
+<!--			<groupId>org.flywaydb</groupId>-->
+<!--			<artifactId>flyway-core</artifactId>-->
+<!--			<version>6.4.0</version>-->
+<!--		</dependency>-->
+		<!--Postgres for prod-->
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>

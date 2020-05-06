@@ -181,3 +181,5 @@ alter table team_match_event
     add constraint FK61e4e4dpi2nn0fsor93ff4a6n
         foreign key (team2_id)
             references team;
+
+alter sequence HIBERNATE_SEQUENCE restart with 500;

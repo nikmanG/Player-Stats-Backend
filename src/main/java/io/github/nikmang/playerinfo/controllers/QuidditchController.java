@@ -1,5 +1,6 @@
 package io.github.nikmang.playerinfo.controllers;
 
+import io.github.nikmang.playerinfo.models.League;
 import io.github.nikmang.playerinfo.models.quidditch.QuidditchMatch;
 import io.github.nikmang.playerinfo.models.quidditch.QuidditchTeam;
 import io.github.nikmang.playerinfo.services.QuidditchService;
@@ -50,6 +51,21 @@ public class QuidditchController {
         return ResponseEntity
                 .ok()
                 .body(quidditchService.getByTeamId(teamId));
+    }
+
+    @GetMapping("public/league")
+    public ResponseEntity<List<QuidditchTeam>> getQuidditchTeamsForLeagueId(@RequestParam long leagueId) {
+        List<QuidditchTeam> teams = quidditchService.getTeamsForLeague(leagueId);
+
+        if(teams == null || teams.size() == 0) {
+            return ResponseEntity
+                    .notFound()
+                    .build();
+        }
+
+        return ResponseEntity
+                .ok()
+                .body(teams);
     }
 
     @GetMapping("public/history")

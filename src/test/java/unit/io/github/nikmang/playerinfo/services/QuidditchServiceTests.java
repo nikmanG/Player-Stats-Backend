@@ -1,8 +1,11 @@
 package unit.io.github.nikmang.playerinfo.services;
 
 import io.github.nikmang.playerinfo.enums.TeamType;
+import io.github.nikmang.playerinfo.models.League;
 import io.github.nikmang.playerinfo.models.Team;
 import io.github.nikmang.playerinfo.models.quidditch.QuidditchMatch;
+import io.github.nikmang.playerinfo.models.quidditch.QuidditchTeam;
+import io.github.nikmang.playerinfo.repositories.LeagueRepository;
 import io.github.nikmang.playerinfo.repositories.PlayerRepository;
 import io.github.nikmang.playerinfo.repositories.TeamRepository;
 import io.github.nikmang.playerinfo.repositories.quidditch.QuidditchMatchRepository;
@@ -14,6 +17,10 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
@@ -32,12 +39,15 @@ public class QuidditchServiceTests {
     private QuidditchMatchRepository quidditchMatchRepository;
     @MockBean
     private QuidditchTeamRepository quidditchTeamRepository;
+    @MockBean
+    private LeagueRepository leagueRepository;
 
     @Before
     public void setup() {
         context = new QuidditchService(
                 teamRepository,
                 playerRepository,
+                leagueRepository,
                 quidditchMatchRepository,
                 quidditchTeamRepository);
     }
@@ -145,5 +155,31 @@ public class QuidditchServiceTests {
 
         //Then
         verify(quidditchTeamRepository, times(1)).findAll(eq(Sort.by("team.wins").descending()));
+    }
+
+    @Test
+    public void testGetTeamsByLeagueWhenInvalidLeague() {
+        //Given
+        League wrong = new League();
+        wrong.setLeagueType(TeamType.DUEL);
+
+        when(leagueRepository.findById(anyLong())).thenReturn(Optional.of(wrong));
+
+        //When
+        List<QuidditchTeam> teams = context.getTeamsForLeague(1L);
+
+        //Then
+        assertEquals(0, teams.size());
+        verify(quidditchTeamRepository, never()).getQuidditchTeamsInTeamsList(any());
+    }
+
+    @Test
+    public void testGetTeamsByLeague() {
+        //Given
+        //When
+        context.getTeamsForLeague(1L);
+
+        //Then
+        verify(quidditchTeamRepository, times(1)).getQuidditchTeamsInTeamsList(any());
     }
 }

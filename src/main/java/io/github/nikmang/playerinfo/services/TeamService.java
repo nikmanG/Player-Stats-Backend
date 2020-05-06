@@ -1,15 +1,18 @@
 package io.github.nikmang.playerinfo.services;
 
 import io.github.nikmang.playerinfo.enums.TeamType;
+import io.github.nikmang.playerinfo.models.League;
 import io.github.nikmang.playerinfo.models.Player;
 import io.github.nikmang.playerinfo.models.Team;
 import io.github.nikmang.playerinfo.models.quidditch.QuidditchTeam;
+import io.github.nikmang.playerinfo.repositories.LeagueRepository;
 import io.github.nikmang.playerinfo.repositories.PlayerRepository;
 import io.github.nikmang.playerinfo.repositories.TeamRepository;
 import io.github.nikmang.playerinfo.repositories.quidditch.QuidditchTeamRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -19,15 +22,69 @@ public class TeamService {
 
     private TeamRepository teamRepository;
     private PlayerRepository playerRepository;
+    private LeagueRepository leagueRepository;
     private QuidditchTeamRepository quidditchTeamRepository;
 
     public TeamService(
             TeamRepository teamRepository,
             PlayerRepository playerRepository,
+            LeagueRepository leagueRepository,
             QuidditchTeamRepository quidditchTeamRepository) {
         this.teamRepository = teamRepository;
         this.playerRepository = playerRepository;
+        this.leagueRepository = leagueRepository;
         this.quidditchTeamRepository = quidditchTeamRepository;
+    }
+
+    /**
+     * Adds a new league to the database.
+     *
+     * @param name The name of the league
+     * @param leagueType The type of teams that can be in the league
+     *
+     * @return The newly created league
+     */
+    public League addLeague(String name, TeamType leagueType) {
+        League league = new League();
+
+        league.setName(name);
+        league.setLeagueType(leagueType);
+
+        return leagueRepository.save(league);
+    }
+
+    /**
+     * Add teams to a league.
+     *
+     * @param teamIds The teams to be added to the league
+     * @param leagueId The id of the league to be adding to
+     *
+     * @return the league to which all the teams were added to. <b>null</b> if teams returned empty or if league was not found
+     */
+    public League addTeamToLeague(List<Long> teamIds, long leagueId) {
+        List<Team> teams = teamRepository.findAllById(teamIds);
+        League league = leagueRepository.findById(leagueId).orElse(null);
+
+        if(league == null || teams.isEmpty()) {
+            return null;
+        }
+
+        teams.forEach(t -> t.setLeague(league));
+        league.getTeams().addAll(teams);
+
+        teamRepository.saveAll(teams);
+        return leagueRepository.save(league);
+    }
+
+    /**
+     * Get all leagues that are for a certain team type.
+     *
+     * @param leagueType The type of league to look for
+     *
+     * @return The leagues found for said type
+     */
+    public List<League> getLeaguesForLeagueType(TeamType leagueType) {
+        return leagueRepository.getLeaguesByLeagueType(leagueType.toString());
     }
 
     /**

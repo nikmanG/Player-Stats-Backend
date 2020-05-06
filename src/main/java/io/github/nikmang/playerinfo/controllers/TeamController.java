@@ -1,6 +1,7 @@
 package io.github.nikmang.playerinfo.controllers;
 
 import io.github.nikmang.playerinfo.enums.TeamType;
+import io.github.nikmang.playerinfo.models.League;
 import io.github.nikmang.playerinfo.models.Team;
 import io.github.nikmang.playerinfo.services.ExternalApiService;
 import io.github.nikmang.playerinfo.services.TeamService;
@@ -8,6 +9,7 @@ import lombok.Data;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -33,7 +35,36 @@ public class TeamController {
     public ResponseEntity<Team> addTeam(@RequestBody TeamWrapper teamWrapper) {
         return ResponseEntity
                 .ok()
-                .body(teamService.addTeam(teamWrapper.name, TeamType.valueOf(teamWrapper.teamType.toUpperCase())));
+                .body(teamService.addTeam(teamWrapper.name, teamWrapper.teamType));
+    }
+
+    @PostMapping("private/add_league")
+    public ResponseEntity<League> addLeague(@RequestBody LeagueWrapper leagueWrapper) {
+        return ResponseEntity
+                .ok()
+                .body(teamService.addLeague(leagueWrapper.leagueName, leagueWrapper.teamType));
+    }
+
+    @PostMapping("private/join_team_league")
+    public ResponseEntity<League> addTeamsToLeague(@RequestBody LeagueTeamWrapper leagueTeamWrapper) {
+        League league = teamService.addTeamToLeague(leagueTeamWrapper.playerIds, leagueTeamWrapper.leagueId);
+
+        if(league == null) {
+            return ResponseEntity
+                    .notFound()
+                    .build();
+        }
+
+        return ResponseEntity
+                .ok()
+                .body(league);
+    }
+
+    @GetMapping("public/get_teams")
+    public ResponseEntity<List<League>> getLeaguesForType(@RequestParam TeamType type) {
+        return ResponseEntity
+        .ok()
+        .body(teamService.getLeaguesForLeagueType(type));
     }
 
     @GetMapping("public/find/{id}")
@@ -51,8 +82,20 @@ public class TeamController {
     }
 
     @Data
+    static class LeagueTeamWrapper {
+        long leagueId;
+        List<Long> playerIds;
+    }
+
+    @Data
     static class TeamWrapper {
         String name;
-        String teamType;
+        TeamType teamType;
+    }
+
+    @Data
+    static class LeagueWrapper {
+        String leagueName;
+        TeamType teamType;
     }
 }
