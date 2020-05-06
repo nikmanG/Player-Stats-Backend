@@ -176,6 +176,15 @@ public class QuidditchServiceTests {
     @Test
     public void testGetTeamsByLeague() {
         //Given
+        Team team = new Team();
+        team.setId(10L);
+
+        League league = new League();
+        league.setLeagueType(TeamType.QUIDDITCH);
+        league.setTeams(Collections.singletonList(team));
+
+        when(leagueRepository.findById(anyLong())).thenReturn(Optional.of(league));
+
         //When
         context.getTeamsForLeague(1L);
 
