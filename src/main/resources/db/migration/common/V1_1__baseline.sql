@@ -92,6 +92,18 @@ create table team_match_event (
                                   primary key (id)
 );
 
+create table league (
+                        id bigint not null,
+                        league_type varchar(255) not null,
+                        name varchar(255) not null,
+                        primary key (id)
+);
+
+create table league_teams (
+                              league_id bigint not null,
+                              teams_id bigint not null
+);
+
 create sequence hibernate_sequence start with 1 increment by 1;
 
 alter table event_group_matches
@@ -111,6 +123,18 @@ alter table team
 
 alter table team
     add constraint UKg2itlggnudko1wdr49eubx804 unique (name, team_type);
+
+alter table league
+    drop constraint if exists UKbnhlo3calrp3di4rfacokewmo;
+
+alter table league
+    add constraint UKbnhlo3calrp3di4rfacokewmo unique (name, league_type);
+
+alter table league_teams
+    drop constraint if exists UK_rdfn86g37n356sf9l8vep4f76;
+
+alter table league_teams
+    add constraint UK_rdfn86g37n356sf9l8vep4f76 unique (teams_id);
 
 alter table duel_match
     add constraint FKophu8ravp9x81hb9katyc6noh

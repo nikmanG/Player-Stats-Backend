@@ -17,7 +17,26 @@ VALUES (1, 'Gryffindor', 'QUIDDITCH', 4, 0, 'https://p1.hiclipart.com/preview/54
        (3, 'Hufflepuff', 'QUIDDITCH', 0, 9000, 'https://www.pngfind.com/pngs/m/115-1150321_what-hogwarts-house-am-i-in-harry-potter.png'),
        (4, 'Ravenclaw', 'QUIDDITCH', 5, 1, 'https://p7.hiclipart.com/preview/563/589/122/ravenclaw-house-fictional-universe-of-harry-potter-common-room-hogwarts-gryffindor-harry-potter-ravenclaw-thumbnail.jpg'),
        (5, 'Aurors', 'DUEL', 100, 6, 'https://www.pngfind.com/pngs/m/193-1939784_harrypotter-hp-ministryofmagic-auror-harry-potter-ministry-of.png'),
-       (6, 'Death Eaters', 'DUEL', 6, 100, 'https://i.pinimg.com/originals/fb/2b/a3/fb2ba3cfe3208bc4f6a6ff4d7072174a.png');
+       (6, 'Death Eaters', 'DUEL', 6, 100, 'https://i.pinimg.com/originals/fb/2b/a3/fb2ba3cfe3208bc4f6a6ff4d7072174a.png'),
+       (7, 'Wampus', 'QUIDDITCH', 7, 1, 'https://vignette.wikia.nocookie.net/harrypotter/images/3/3f/Horned_Serpent_ClearBG_2.png/revision/latest/scale-to-width-down/125?cb=20161204071312'),
+       (8, 'Horned Serpent', 'QUIDDITCH', 10, 3, 'https://vignette.wikia.nocookie.net/harrypotter/images/e/e6/Wampus_ClearBG_2.png/revision/latest/scale-to-width-down/125?cb=20161204224541'),
+       (9, 'Thunderbird', 'QUIDDITCH', 6, 2, 'https://vignette.wikia.nocookie.net/harrypotter/images/1/1a/Thundebird_ClearBG_2.png/revision/latest/scale-to-width-down/150?cb=20161204221417'),
+       (10, 'Pukwudgie', 'QUIDDITCH', 0, 12, 'https://vignette.wikia.nocookie.net/harrypotter/images/a/a5/Pukwudgie_ClearBG_2.png/revision/latest/scale-to-width-down/125?cb=20161204075023');
+
+/* INSERT LEAGUES */
+INSERT INTO `League` (id, name, league_type)
+VALUES (1, 'Hogwarts House League', 'QUIDDITCH'),
+       (2, 'Ilvermorny House League', 'QUIDDITCH');
+
+INSERT INTO `League_Teams` (league_id, teams_id)
+VALUES (1, 1),
+       (1, 2),
+       (1, 3),
+       (1, 4),
+       (2, 7),
+       (2, 8),
+       (2, 9),
+       (2, 10);
 
 /* INSERT TEAM PAIRINGS */
 INSERT INTO `Player_Team` (player_id, team_id)
@@ -74,7 +93,11 @@ INSERT INTO `Quidditch_Team` (id, team_id, points_for, points_against)
 VALUES (1, 1, 540, 270),
        (2, 2, 330, 560),
        (3, 3, 170, 220),
-       (4, 4, 110, 50);
+       (4, 4, 110, 50),
+       (7, 10, 50, 230),
+       (8, 8, 100, 10),
+       (9, 9, 240, 50),
+       (10, 7, 70, 1000);
 
 INSERT INTO `Quidditch_Match` (id, match_date, winner_score, loser_score, winner_id, loser_id, snitch_catcher_id)
 VALUES (1, '2020-04-21 20:41:28.824', 150, 70, 1, 2, 1),
