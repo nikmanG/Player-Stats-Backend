@@ -39,10 +39,10 @@ public class TeamController {
     }
 
     @PostMapping("private/add_league")
-    public ResponseEntity<League> addLeague(@RequestBody LeagueWrapper leagueWrapper) {
+    public ResponseEntity<League> addLeague(@RequestBody TeamWrapper leagueWrapper) {
         return ResponseEntity
                 .ok()
-                .body(teamService.addLeague(leagueWrapper.leagueName, leagueWrapper.teamType));
+                .body(teamService.addLeague(leagueWrapper.name, leagueWrapper.teamType));
     }
 
     @PostMapping("private/join_team_league")
@@ -60,7 +60,7 @@ public class TeamController {
                 .body(league);
     }
 
-    @GetMapping("public/get_teams")
+    @GetMapping("public/get_leagues")
     public ResponseEntity<List<League>> getLeaguesForType(@RequestParam TeamType type) {
         return ResponseEntity
         .ok()
@@ -90,12 +90,6 @@ public class TeamController {
     @Data
     static class TeamWrapper {
         String name;
-        TeamType teamType;
-    }
-
-    @Data
-    static class LeagueWrapper {
-        String leagueName;
         TeamType teamType;
     }
 }

@@ -55,7 +55,8 @@ public class PlayerController {
         Player player = playerService.getPlayer(playerId);
 
         if(player != null) {
-            externalApiService.getPlayerName(player.getUuid());
+            String playerName = externalApiService.getPlayerName(player.getUuid());
+            player.setName(playerName);
         }
 
         return ResponseEntity

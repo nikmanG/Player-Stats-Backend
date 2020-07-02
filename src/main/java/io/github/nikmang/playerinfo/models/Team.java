@@ -53,7 +53,7 @@ public class Team implements Competitor {
     @ColumnDefault("0")
     private int draws;
 
-    @JsonBackReference
+    @JsonManagedReference
     @ManyToOne
     private League league;
 

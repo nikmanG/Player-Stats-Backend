@@ -1,5 +1,6 @@
 package io.github.nikmang.playerinfo.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.github.nikmang.playerinfo.enums.TeamType;
 import lombok.Data;
@@ -30,7 +31,7 @@ public class League {
     @NotNull
     private String name;
 
-    @JsonManagedReference
+    @JsonBackReference
     @OneToMany
     public List<Team> teams;
 }

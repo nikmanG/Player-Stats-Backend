@@ -17,7 +17,7 @@ public class HomeController {
      *
      * @return A string to tell you that there is no backend landing page
      */
-    @RequestMapping
+    @RequestMapping(value = {"", "/"})
     public String welcome() {
         return "This is the API backend. API calls only.";
     }
