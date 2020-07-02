@@ -35,17 +35,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/**")
                 .permitAll()
-//                .anyRequest()
-//                .authenticated()
+                .anyRequest()
+                .authenticated()
                 .and()
                 .headers()
                 .frameOptions()
-                .sameOrigin();
-//                .and()
-//                .addFilter(new JwtAuthenticationFilter(authenticationManager(), constants))
-//                .addFilter(new JwtAuthorizationFilter(authenticationManager(), constants))
-//                .sessionManagement()
-//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .sameOrigin()
+                .and()
+                .addFilter(new JwtAuthenticationFilter(authenticationManager(), constants))
+                .addFilter(new JwtAuthorizationFilter(authenticationManager(), constants))
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
     @Override
