@@ -18,11 +18,11 @@ public class ExternalApiService {
     private static final long cooldown = 3600000L;
 
     private RestTemplate restTemplate;
-    private PlayerRepository playerRepository;
+    private PlayerService playerService;
 
-    public ExternalApiService(PlayerRepository playerRepository, RestTemplateBuilder restTemplateBuilder) {
+    public ExternalApiService(PlayerService playerService, RestTemplateBuilder restTemplateBuilder) {
         this.restTemplate = restTemplateBuilder.build();
-        this.playerRepository = playerRepository;
+        this.playerService = playerService;
     }
 
     /**
@@ -54,7 +54,7 @@ public class ExternalApiService {
             }
         }
 
-        playerRepository.saveAll(players);
+        playerService.updatePlayers(players);
 
         return mappings;
     }

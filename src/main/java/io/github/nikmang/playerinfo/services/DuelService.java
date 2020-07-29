@@ -5,7 +5,6 @@ import io.github.nikmang.playerinfo.models.Player;
 import io.github.nikmang.playerinfo.models.Team;
 import io.github.nikmang.playerinfo.models.duelling.DuelMatch;
 import io.github.nikmang.playerinfo.models.duelling.DuelPlayer;
-import io.github.nikmang.playerinfo.repositories.PlayerRepository;
 import io.github.nikmang.playerinfo.repositories.TeamRepository;
 import io.github.nikmang.playerinfo.repositories.duelling.DuelMatchRepository;
 import io.github.nikmang.playerinfo.repositories.duelling.DuelPlayerRepository;
@@ -20,20 +19,21 @@ public class DuelService {
 
     private static final int k = 24;
 
-    private PlayerRepository playerRepository;
     private TeamRepository teamRepository;
     private DuelPlayerRepository duelPlayerRepository;
     private DuelMatchRepository duelMatchRepository;
 
-    public DuelService(
-            PlayerRepository playerRepository,
-            TeamRepository teamRepository,
-            DuelPlayerRepository duelPlayerRepository,
-            DuelMatchRepository duelMatchRepository) {
-        this.playerRepository = playerRepository;
+    private PlayerService playerService;
+
+    public DuelService(TeamRepository teamRepository,
+                       DuelPlayerRepository duelPlayerRepository,
+                       DuelMatchRepository duelMatchRepository,
+                       PlayerService playerService) {
         this.teamRepository = teamRepository;
         this.duelPlayerRepository = duelPlayerRepository;
         this.duelMatchRepository = duelMatchRepository;
+
+        this.playerService = playerService;
     }
 
     /**
@@ -46,16 +46,8 @@ public class DuelService {
      * @return Match record with updated elo information for both players
      */
     public DuelMatch recordMatch(String winnerUuid, String loserUuid) {
-        Player winner = playerRepository.findByUuid(winnerUuid);
-        Player loser = playerRepository.findByUuid(loserUuid);
-
-        if(winner == null) {
-            winner = createPlayer(winnerUuid);
-        }
-
-        if(loser == null) {
-            loser = createPlayer(loserUuid);
-        }
+        Player winner = playerService.getOrAddPlayer(winnerUuid);
+        Player loser = playerService.getOrAddPlayer(loserUuid);
 
         DuelPlayer winnerDuelPlayer = getPlayerProfile(winnerUuid);
         DuelPlayer loserDuelPlayer = getPlayerProfile(loserUuid);
@@ -105,11 +97,7 @@ public class DuelService {
      * @return information on player's duels
      */
     public DuelPlayer getPlayerProfile(String uuid) {
-        Player player = playerRepository.findByUuid(uuid);
-
-        if(player == null) {
-            player = createPlayer(uuid);
-        }
+        Player player = playerService.getOrAddPlayer(uuid);
 
         return getPlayerProfile(player);
     }
@@ -123,7 +111,7 @@ public class DuelService {
      * @return information on player's duels. Will return <b>null</b> if player profile cannot be found.
      */
     public DuelPlayer getPlayerProfile(long playerId) {
-        Player player = playerRepository.findById(playerId).orElse(null);
+        Player player = playerService.getPlayer(playerId);
 
         if(player == null) {
             return null;
@@ -178,13 +166,5 @@ public class DuelService {
         result[1] = Math.round(loserElo + k * (0 - loserProb));
 
         return result;
-    }
-
-    private Player createPlayer(String uuid) {
-        Player player = new Player();
-        player.setUuid(uuid);
-        player = playerRepository.save(player);
-
-        return player;
     }
 }

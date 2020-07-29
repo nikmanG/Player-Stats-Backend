@@ -11,9 +11,7 @@ import io.github.nikmang.playerinfo.repositories.TeamRepository;
 import io.github.nikmang.playerinfo.repositories.quidditch.QuidditchTeamRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -21,19 +19,18 @@ import java.util.stream.Collectors;
 public class TeamService {
 
     private TeamRepository teamRepository;
-    private PlayerRepository playerRepository;
     private LeagueRepository leagueRepository;
-    private QuidditchTeamRepository quidditchTeamRepository;
+
+    private PlayerService playerService;
 
     public TeamService(
             TeamRepository teamRepository,
-            PlayerRepository playerRepository,
             LeagueRepository leagueRepository,
-            QuidditchTeamRepository quidditchTeamRepository) {
+            PlayerService playerService) {
         this.teamRepository = teamRepository;
-        this.playerRepository = playerRepository;
         this.leagueRepository = leagueRepository;
-        this.quidditchTeamRepository = quidditchTeamRepository;
+
+        this.playerService = playerService;
     }
 
     /**
@@ -107,7 +104,7 @@ public class TeamService {
      *
      * @return Team with given name for given type.
      */
-    public Team getTeamByNameAndType(String name, TeamType type) {
+    public Team getOrCreateTeamByNameAndType(String name, TeamType type) {
         Team team = teamRepository.findTeamByNameAndType(name, type.toString());
 
         if(team == null) {
@@ -126,15 +123,7 @@ public class TeamService {
      * @return Team that was saved. Main difference would be the added internal ID
      */
     public Team addTeam(String teamName, TeamType teamType) {
-        Team team = createTeam(teamName, teamType);
-
-        if(teamType == TeamType.QUIDDITCH) {
-            QuidditchTeam quidditchTeam = new QuidditchTeam();
-            quidditchTeam.setTeam(team);
-            quidditchTeamRepository.save(quidditchTeam);
-        }
-
-        return team;
+        return createTeam(teamName, teamType);
     }
 
     /**
@@ -156,13 +145,22 @@ public class TeamService {
      * @return Map of teams that a player belongs to in the form of K: {@linkplain TeamType} V: {@linkplain Team}
      */
     public Map<TeamType, Team> getTeamsByPlayerId(long playerId) {
-        Player player = playerRepository.findById(playerId).orElse(null);
+        Player player = playerService.getPlayer(playerId);
 
         if(player == null) {
             return Collections.emptyMap();
         }
 
         return teamRepository.findAll().stream().filter(t -> t.getPlayers().contains(player)).collect(Collectors.toMap(Team::getTeamType, Function.identity()));
+    }
+
+    /**
+     * Saves updated team info to database.
+     *
+     * @param teams Teams to be saved
+     */
+    public void updateTeams(Collection<Team> teams) {
+        this.teamRepository.saveAll(teams);
     }
 
     private Team createTeam(String name, TeamType type) {

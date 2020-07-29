@@ -8,6 +8,7 @@ import io.github.nikmang.playerinfo.repositories.LeagueRepository;
 import io.github.nikmang.playerinfo.repositories.PlayerRepository;
 import io.github.nikmang.playerinfo.repositories.TeamRepository;
 import io.github.nikmang.playerinfo.repositories.quidditch.QuidditchTeamRepository;
+import io.github.nikmang.playerinfo.services.PlayerService;
 import io.github.nikmang.playerinfo.services.TeamService;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,17 +32,14 @@ public class TeamServiceTests {
     private TeamRepository teamRepository;
 
     @MockBean
-    private PlayerRepository playerRepository;
-
-    @MockBean
-    private QuidditchTeamRepository quidditchTeamRepository;
-
-    @MockBean
     private LeagueRepository leagueRepository;
+
+    @MockBean
+    private PlayerService playerService;
 
     @Before
     public void setup() {
-        this.context = new TeamService(teamRepository, playerRepository, leagueRepository, quidditchTeamRepository);
+        this.context = new TeamService(teamRepository, leagueRepository, playerService);
         this.testTeam = new Team();
         this.testTeam.setTeamType(TeamType.QUIDDITCH);
         this.testTeam.setName("TEST TEAM");
@@ -64,7 +62,7 @@ public class TeamServiceTests {
         when(teamRepository.findTeamByNameAndType(anyString(), any())).thenReturn(testTeam);
 
         //When
-        context.getTeamByNameAndType("TEST TEAM", TeamType.QUIDDITCH);
+        context.getOrCreateTeamByNameAndType("TEST TEAM", TeamType.QUIDDITCH);
 
         //Then
         verify(teamRepository, times(1)).findTeamByNameAndType(eq("TEST TEAM"), eq(TeamType.QUIDDITCH.toString()));
@@ -77,7 +75,7 @@ public class TeamServiceTests {
         when(teamRepository.findTeamByNameAndType(anyString(), any())).thenReturn(null);
 
         //When
-        Team t = context.getTeamByNameAndType("TEST TEAM 2", TeamType.DUEL);
+        Team t = context.getOrCreateTeamByNameAndType("TEST TEAM 2", TeamType.DUEL);
 
         //Then
         verify(teamRepository, times(1)).findTeamByNameAndType(eq("TEST TEAM 2"), eq(TeamType.DUEL.toString()));
@@ -128,7 +126,7 @@ public class TeamServiceTests {
         secondTeam.setPlayers(Collections.emptySet());
 
         when(teamRepository.findAll()).thenReturn(Arrays.asList(testTeam, secondTeam));
-        when(playerRepository.findById(anyLong())).thenReturn(Optional.of(player));
+        when(playerService.getPlayer(anyLong())).thenReturn(player);
 
         //When
         Map<TeamType, Team> teams = context.getTeamsByPlayerId(2L);
@@ -148,6 +146,16 @@ public class TeamServiceTests {
 
         //Then
         verify(leagueRepository, times(1)).save(any());
+    }
+
+    @Test
+    public  void testUpdateTeams() {
+        //Given
+        //When
+        context.updateTeams(Collections.singleton(new Team()));
+
+        //Then
+        verify(teamRepository, times(1)).saveAll(anyIterable());
     }
 
     @Test

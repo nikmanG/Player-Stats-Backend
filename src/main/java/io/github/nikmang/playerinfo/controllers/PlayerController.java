@@ -37,7 +37,7 @@ public class PlayerController {
     public ResponseEntity<Player> addPlayer(@RequestBody UuidWrapper wrapper) {
         return ResponseEntity
                 .ok()
-                .body(playerService.addPlayer(wrapper.uuid));
+                .body(playerService.getOrAddPlayer(wrapper.uuid));
     }
 
     @GetMapping("private/join")

@@ -1,7 +1,7 @@
 package unit.io.github.nikmang.playerinfo.services;
 
-import io.github.nikmang.playerinfo.repositories.PlayerRepository;
 import io.github.nikmang.playerinfo.services.ExternalApiService;
+import io.github.nikmang.playerinfo.services.PlayerService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,7 +23,7 @@ public class ExternalApiServiceTests {
     private ExternalApiService context;
 
     @MockBean
-    private PlayerRepository playerRepository;
+    private PlayerService playerService;
 
     @MockBean
     private RestTemplate restTemplate;
@@ -33,7 +33,7 @@ public class ExternalApiServiceTests {
         RestTemplateBuilder templateBuilder = mock(RestTemplateBuilder.class);
 
         when(templateBuilder.build()).thenReturn(restTemplate);
-        context = new ExternalApiService(playerRepository, templateBuilder);
+        context = new ExternalApiService(playerService, templateBuilder);
     }
 
     @Test

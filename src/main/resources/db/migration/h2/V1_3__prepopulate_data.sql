@@ -1,3 +1,5 @@
+create sequence hibernate_sequence start with 1 increment by 1;
+
 INSERT INTO `Player` (id, uuid)
 VALUES (1, '1461170a-ce2b-4894-9713-ee476a2c703a'),
        (2, '367acdd7-ec2c-4e27-9478-31c1fe5cde8a'),
@@ -141,3 +143,13 @@ VALUES (1, 2),
        (1, 6),
        (1, 7),
        (1, 8);
+
+/* Quidditch Stats per player */
+INSERT INTO `Quidditch_Player` (id, player_id, seeker_games, chaser_games, beater_games, keeper_games, goals_scored, goals_conceded)
+VALUES (1, 2, 1, 1, 2, 0, 100, 5),
+       (2, 3, 1, 1, 2, 0, 6, 10),
+       (3, 5, 5, 1, 0, 0, 0, 5);
+
+INSERT INTO `Snitch_Catches` (id, catcher, opponent, time_length)
+VALUES (1, 2, 3, 1000000),
+       (2, 5, 2, 100);

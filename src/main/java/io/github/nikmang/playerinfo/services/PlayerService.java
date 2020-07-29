@@ -4,6 +4,9 @@ import io.github.nikmang.playerinfo.models.Player;
 import io.github.nikmang.playerinfo.repositories.PlayerRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 @Service
 public class PlayerService {
 
@@ -21,7 +24,7 @@ public class PlayerService {
      *
      * @return Player object created, or existing one in database
      */
-    public Player addPlayer(String uuid) {
+    public Player getOrAddPlayer(String uuid) {
         Player player = playerRepository.findByUuid(uuid);
 
         if(player != null)
@@ -44,5 +47,14 @@ public class PlayerService {
      */
     public Player getPlayer(long id) {
         return playerRepository.findById(id).orElse(null);
+    }
+
+    /**
+     * Saves players to repository.
+     *
+     * @param players Players to be saved
+     */
+    public void updatePlayers(Collection<Player> players) {
+        playerRepository.saveAll(players);
     }
 }

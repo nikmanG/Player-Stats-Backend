@@ -2,14 +2,17 @@ package io.github.nikmang.playerinfo.services;
 
 import io.github.nikmang.playerinfo.enums.TeamType;
 import io.github.nikmang.playerinfo.models.League;
+import io.github.nikmang.playerinfo.models.Player;
 import io.github.nikmang.playerinfo.models.Team;
 import io.github.nikmang.playerinfo.models.quidditch.QuidditchMatch;
+import io.github.nikmang.playerinfo.models.quidditch.QuidditchPlayer;
 import io.github.nikmang.playerinfo.models.quidditch.QuidditchTeam;
+import io.github.nikmang.playerinfo.models.quidditch.SnitchCatches;
 import io.github.nikmang.playerinfo.repositories.LeagueRepository;
-import io.github.nikmang.playerinfo.repositories.PlayerRepository;
-import io.github.nikmang.playerinfo.repositories.TeamRepository;
 import io.github.nikmang.playerinfo.repositories.quidditch.QuidditchMatchRepository;
+import io.github.nikmang.playerinfo.repositories.quidditch.QuidditchPlayerRepository;
 import io.github.nikmang.playerinfo.repositories.quidditch.QuidditchTeamRepository;
+import io.github.nikmang.playerinfo.repositories.quidditch.SnitchCatchRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -22,22 +25,31 @@ import java.util.stream.Collectors;
 @Service
 public class QuidditchService {
 
-    private final TeamRepository teamRepository;
-    private final PlayerRepository playerRepository;
     private final QuidditchMatchRepository quidditchMatchRepository;
     private final QuidditchTeamRepository quidditchTeamRepository;
     private final LeagueRepository leagueRepository;
+    private final SnitchCatchRepository snitchCatchRepository;
+    private final QuidditchPlayerRepository quidditchPlayerRepository;
 
-    public QuidditchService(TeamRepository teamRepository,
-                            PlayerRepository playerRepository,
+    private final PlayerService playerService;
+    private final TeamService teamService;
+
+    public QuidditchService(
                             LeagueRepository leagueRepository,
                             QuidditchMatchRepository quidditchMatchRepository,
-                            QuidditchTeamRepository quidditchTeamRepository) {
-        this.teamRepository = teamRepository;
-        this.playerRepository = playerRepository;
+                            QuidditchTeamRepository quidditchTeamRepository,
+                            SnitchCatchRepository snitchCatchRepository,
+                            QuidditchPlayerRepository quidditchPlayerRepository,
+                            PlayerService playerService,
+                            TeamService teamService) {
         this.leagueRepository = leagueRepository;
         this.quidditchMatchRepository = quidditchMatchRepository;
         this.quidditchTeamRepository = quidditchTeamRepository;
+        this.snitchCatchRepository = snitchCatchRepository;
+        this.quidditchPlayerRepository = quidditchPlayerRepository;
+
+        this.playerService = playerService;
+        this.teamService = teamService;
     }
 
     /**
@@ -56,16 +68,8 @@ public class QuidditchService {
                                  long winnerScore,
                                  long loserScore,
                                  String catcherUuid) {
-        Team winner = teamRepository.findTeamByNameAndType(winnerTeamName, TeamType.QUIDDITCH.toString());
-        Team loser = teamRepository.findTeamByNameAndType(loserTeamName, TeamType.QUIDDITCH.toString());
-
-        if(winner == null) {
-            winner = createTeam(winnerTeamName);
-        }
-
-        if(loser == null) {
-            loser = createTeam(loserTeamName);
-        }
+        Team winner = teamService.getOrCreateTeamByNameAndType(winnerTeamName, TeamType.QUIDDITCH);
+        Team loser = teamService.getOrCreateTeamByNameAndType(loserTeamName, TeamType.QUIDDITCH);
 
         QuidditchTeam winnerTeam = quidditchTeamRepository.getByTeamId(winner.getId());
         QuidditchTeam loserTeam = quidditchTeamRepository.getByTeamId(loser.getId());
@@ -92,7 +96,7 @@ public class QuidditchService {
         quidditchMatch.setLoser(loser);
 
         if(catcherUuid != null) {
-            quidditchMatch.setSnitchCatcher(playerRepository.findByUuid(catcherUuid));
+            quidditchMatch.setSnitchCatcher(playerService.getOrAddPlayer(catcherUuid));
         }
 
         if(quidditchMatch.wasTie()) {
@@ -105,9 +109,36 @@ public class QuidditchService {
 
         quidditchTeamRepository.saveAll(Arrays.asList(winnerTeam, loserTeam));
         quidditchMatchRepository.save(quidditchMatch);
-        teamRepository.saveAll(Arrays.asList(winner, loser));
+
+        teamService.updateTeams(Arrays.asList(winner, loser));
 
         return quidditchMatch;
+    }
+
+    /**
+     * Retrieves a quidditch player profile for a target player.
+     * If no profile exists, one is created but not saved.
+     *
+     * @param uuid UUID of player
+     * @return Quidditch player object with their details
+     */
+    public QuidditchPlayer getPlayerProfile(String uuid) {
+        Player player = playerService.getOrAddPlayer(uuid);
+
+        return getPlayerProfile(player);
+    }
+
+    /**
+     * Retrieves a quidditch player profile for a target player.
+     * If no profile exists, one is created but not saved.
+     *
+     * @param uuid UUID of player
+     * @return Quidditch player object with their details
+     */
+    public List<SnitchCatches> getSnitchCatches(String uuid) {
+        Player player = playerService.getOrAddPlayer(uuid);
+
+        return snitchCatchRepository.getAllForPlayer(player.getId());
     }
 
     /**
@@ -158,17 +189,6 @@ public class QuidditchService {
         return quidditchTeamRepository.findAll(Sort.by("team.wins").descending());
     }
 
-    private Team createTeam(String name) {
-        Team team = new Team();
-
-        team.setName(name);
-        team.setTeamType(TeamType.QUIDDITCH);
-
-        teamRepository.save(team);
-
-        return team;
-    }
-
     private QuidditchTeam createQuidditchTeam(Team team) {
         QuidditchTeam quidditchTeam = new QuidditchTeam();
 
@@ -176,5 +196,17 @@ public class QuidditchService {
 
         quidditchTeamRepository.save(quidditchTeam);
         return quidditchTeam;
+    }
+
+    private QuidditchPlayer getPlayerProfile(Player player) {
+        QuidditchPlayer quidditchPlayer = quidditchPlayerRepository.getByPlayerId(player.getId());
+
+        if(quidditchPlayer == null) {
+            quidditchPlayer = new QuidditchPlayer();
+            quidditchPlayer.setPlayer(player);
+        }
+
+
+        return quidditchPlayer;
     }
 }

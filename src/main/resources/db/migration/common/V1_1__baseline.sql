@@ -135,8 +135,6 @@ alter table team
 alter table team
     add constraint UKg2itlggnudko1wdr49eubx804 unique (name, team_type);
 
-create sequence hibernate_sequence start with 1 increment by 1;
-
 alter table duel_match
     add constraint FKophu8ravp9x81hb9katyc6noh
         foreign key (loser_id)

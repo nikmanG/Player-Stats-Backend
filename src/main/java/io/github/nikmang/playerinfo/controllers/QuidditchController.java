@@ -1,6 +1,5 @@
 package io.github.nikmang.playerinfo.controllers;
 
-import io.github.nikmang.playerinfo.models.League;
 import io.github.nikmang.playerinfo.models.quidditch.QuidditchMatch;
 import io.github.nikmang.playerinfo.models.quidditch.QuidditchTeam;
 import io.github.nikmang.playerinfo.services.QuidditchService;

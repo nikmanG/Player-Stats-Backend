@@ -9,6 +9,8 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Collections;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -31,7 +33,7 @@ public class PlayerServiceTests {
     public void whenAddingNewPlayer() {
         //Given
         //When
-        context.addPlayer("12345");
+        context.getOrAddPlayer("12345");
 
         //Then
         verify(playerRepository, times(1)).save(any());
@@ -44,11 +46,21 @@ public class PlayerServiceTests {
         when(playerRepository.findByUuid(anyString())).thenReturn(new Player());
 
         //When
-        context.addPlayer("12345");
+        context.getOrAddPlayer("12345");
 
         //Then
         verify(playerRepository, never()).save(any());
         verify(playerRepository, times(1)).findByUuid(eq("12345"));
+    }
+
+    @Test
+    public void whenUpdatingPlayers() {
+        //Given
+        //When
+        context.updatePlayers(Collections.singleton(new Player()));
+
+        //The
+        verify(playerRepository, times(1)).saveAll(anyIterable());
     }
 
     @Test

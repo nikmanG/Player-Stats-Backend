@@ -9,6 +9,7 @@ import io.github.nikmang.playerinfo.repositories.TeamRepository;
 import io.github.nikmang.playerinfo.repositories.duelling.DuelMatchRepository;
 import io.github.nikmang.playerinfo.repositories.duelling.DuelPlayerRepository;
 import io.github.nikmang.playerinfo.services.DuelService;
+import io.github.nikmang.playerinfo.services.PlayerService;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -43,6 +44,9 @@ public class DuelServiceTests {
     @MockBean
     private TeamRepository teamRepository;
 
+    @MockBean
+    private PlayerService playerService;
+
     @BeforeClass
     public static void setupOnce() {
         player1 = new Player();
@@ -58,11 +62,11 @@ public class DuelServiceTests {
 
     @Before
     public void setup() {
-        when(playerRepository.findByUuid(matches("1461170a-ce2b-4894-9713-ee476a2c703a"))).thenReturn(player1);
-        when(playerRepository.findByUuid(matches("367acdd7-ec2c-4e27-9478-31c1fe5cde8a"))).thenReturn(player2);
+        when(playerService.getOrAddPlayer(matches("1461170a-ce2b-4894-9713-ee476a2c703a"))).thenReturn(player1);
+        when(playerService.getOrAddPlayer(matches("367acdd7-ec2c-4e27-9478-31c1fe5cde8a"))).thenReturn(player2);
 
-        when(playerRepository.findById(eq(1L))).thenReturn(Optional.of(player1));
-        when(playerRepository.findById(eq(2L))).thenReturn(Optional.of(player2));
+        when(playerService.getPlayer(eq(1L))).thenReturn(player1);
+        when(playerService.getPlayer(eq(2L))).thenReturn(player2);
 
         DuelPlayer duelPlayer1 = new DuelPlayer();
         duelPlayer1.setElo(1100L);
@@ -76,10 +80,10 @@ public class DuelServiceTests {
         when(duelPlayerRepository.findByPlayer(eq(2L))).thenReturn(duelPlayer2);
 
         this.context = new DuelService(
-                playerRepository,
                 teamRepository,
                 duelPlayerRepository,
-                duelMatchRepository);
+                duelMatchRepository,
+                playerService);
     }
 
     @Test
@@ -101,8 +105,8 @@ public class DuelServiceTests {
                 "367acdd7-ec2c-4e27-9478-31c1fe5cde8a");
 
         //Then
-        assertEquals(((Player) duelMatch.getWinner()).getName(), "sirNik");
-        assertEquals(((Player) duelMatch.getLoser()).getName(), "Felixx61");
+        assertEquals(duelMatch.getWinner().getName(), "sirNik");
+        assertEquals(duelMatch.getLoser().getName(), "Felixx61");
 
         assertEquals(1100L, duelMatch.getOldWinnerElo());
         assertEquals(1200L, duelMatch.getOldLoserElo());
@@ -131,7 +135,7 @@ public class DuelServiceTests {
         DuelPlayer pl = context.getPlayerProfile("1461170a-ce2b-4894-9713-ee476a2c703a");
 
         //Then
-        verify(playerRepository, times(1)).findByUuid("1461170a-ce2b-4894-9713-ee476a2c703a");
+        verify(playerService, times(1)).getOrAddPlayer("1461170a-ce2b-4894-9713-ee476a2c703a");
         verify(duelPlayerRepository, times(1)).findByPlayer(1L);
 
         assertEquals(1100L, pl.getElo());
@@ -142,7 +146,7 @@ public class DuelServiceTests {
         //Give
         Player pl = new Player();
         pl.setUuid("123");
-        when(playerRepository.save(any())).thenReturn(pl);
+        when(playerService.getOrAddPlayer(any())).thenReturn(pl);
 
         pl.setId(3L);
 
@@ -150,7 +154,7 @@ public class DuelServiceTests {
         DuelPlayer duelPlayer = context.getPlayerProfile(pl.getUuid());
 
         //Then
-        verify(playerRepository, times(1)).findByUuid("123");
+        verify(playerService, times(1)).getOrAddPlayer("123");
         verify(duelPlayerRepository, times(1)).findByPlayer(3L);
 
         assertEquals(1200L, duelPlayer.getElo());
@@ -158,7 +162,7 @@ public class DuelServiceTests {
 
     @Test
     public void whenGettingNonExistentPlayerById() {
-        //Give
+        //Given
         Player pl = new Player();
         pl.setUuid("123");
         pl.setId(3L);
@@ -167,7 +171,7 @@ public class DuelServiceTests {
         DuelPlayer duelPlayer = context.getPlayerProfile(pl.getId());
 
         //Then
-        verify(playerRepository, times(1)).findById(pl.getId());
+        verify(playerService, times(1)).getPlayer(pl.getId());
 
         assertNull(duelPlayer);
     }
