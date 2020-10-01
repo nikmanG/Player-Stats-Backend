@@ -1,5 +1,3 @@
-create sequence hibernate_sequence start with 1 increment by 1;
-
 INSERT INTO `Player` (id, uuid)
 VALUES (1, '1461170a-ce2b-4894-9713-ee476a2c703a'),
        (2, '367acdd7-ec2c-4e27-9478-31c1fe5cde8a'),

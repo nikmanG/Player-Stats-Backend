@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class DuelService {
@@ -77,6 +78,63 @@ public class DuelService {
         duelPlayerRepository.save(loserDuelPlayer);
 
         return duelMatch;
+    }
+
+    /**
+     * Returns the scores of a team match
+     * Scoring is done on the following basis:
+     * <ul>
+     *     <li>Each win is a point for given team.</li>
+     *     <li>Winning team gets 3 extra points.</li>
+     *     <li><i>If</i> there is a tie, then both teams get 1 bonus point.</li>
+     *     <li>Top dueller (ladder rank 1) that wins also gets a bonus point for their team.</li>
+     * </ul>
+     *
+     * @param team1 First team playing.
+     * @param team2 Second team playing.
+     * @param topPlayerTeam1 Top ranked player from team 1.
+     * @param topPlayerTeam2 Top ranked player from team 2.
+     * @param winnerUUIDs List of winner UUIDs. <b>Do not</b> have to be in rank order.
+     *
+     * @return array in format <i>{team 1 score, team 2 score}</i>
+     */
+    public int[] getTeamMatchResults(
+            Team team1,
+            Team team2,
+            String topPlayerTeam1,
+            String topPlayerTeam2,
+            Set<String> winnerUUIDs) {
+        int team1Score = 0;
+        int team2Score = 0;
+
+        for(Player player : team1.getPlayers()) {
+            if(winnerUUIDs.contains(player.getUuid())) {
+                team1Score++;
+            }
+        }
+
+        for(Player player : team2.getPlayers()) {
+            if(winnerUUIDs.contains(player.getUuid())) {
+                team2Score++;
+            }
+        }
+
+        if(team1Score > team2Score) {
+            team1Score += 3;
+        } else if(team2Score > team1Score) {
+            team2Score += 3;
+        } else {
+            team1Score++;
+            team2Score++;
+        }
+
+        if(winnerUUIDs.contains(topPlayerTeam1)) {
+            team1Score++;
+        } else {
+            team1Score++;
+        }
+
+        return new int[]{team1Score, team2Score};
     }
 
     /**
